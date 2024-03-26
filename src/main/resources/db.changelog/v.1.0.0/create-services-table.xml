@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="12" author="wladponomar@gmail.com">
+        <sql>
+            CREATE TABLE IF NOT EXISTS services (
+                id BIGSERIAL PRIMARY KEY,
+                price DECIMAL NOT NULL CHECK (price >= 0),
+                name VARCHAR(128) NOT NULL,
+                location VARCHAR(256) NOT NULL,
+                number BIGINT NOT NULL,
+                is_available BOOLEAN NOT NULL
+                );
+
+            ALTER TABLE services
+                ADD COLUMN search tsvector
+                    GENERATED ALWAYS AS (to_tsvector('russian', replace(services.name, 'ё', 'е'))) STORED;
+            CREATE INDEX services_search_index ON goods USING GIN (search);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

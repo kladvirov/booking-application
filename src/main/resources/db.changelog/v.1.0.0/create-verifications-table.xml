@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="6" author="wladponomar@gmail.com">
+        <sql>
+            CREATE TABLE IF NOT EXISTS verifications (
+                id BIGSERIAL PRIMARY KEY,
+                token VARCHAR(128) NOT NULL,
+                is_completed BOOLEAN NOT NULL,
+                expires_at TIMESTAMPTZ NOT NULL,
+                user_id BIGINT NOT NULL REFERENCES users(id)
+                );
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

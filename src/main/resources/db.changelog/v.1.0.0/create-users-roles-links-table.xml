@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="8" author="wladponomar@gmail.com">
+        <sql>
+            CREATE TABLE users_roles_links (
+                user_id BIGINT NOT NULL REFERENCES users(id),
+                role_id BIGINT NOT NULL REFERENCES roles(id)
+            );
+
+            ALTER TABLE users
+                ADD COLUMN search tsvector
+                    GENERATED ALWAYS AS (to_tsvector('russian', replace(
+                            users.first_name  ' '  users.last_name  ' '  users.username,
+                            'ё', 'е'))) STORED;
+            CREATE INDEX users_search_index ON users USING GIN (search);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
