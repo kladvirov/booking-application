@@ -18,7 +18,7 @@
             ALTER TABLE services
                 ADD COLUMN search tsvector
                     GENERATED ALWAYS AS (to_tsvector('russian', replace(services.name, 'ё', 'е'))) STORED;
-            CREATE INDEX services_search_index ON goods USING GIN (search);
+            CREATE INDEX services_search_index ON services USING GIN (search);
         </sql>
     </changeSet>
 
