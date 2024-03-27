@@ -13,6 +13,8 @@
                 location TEXT NOT NULL CHECK(1024 > LENGTH(location)),
                 slot TEXT NOT NULL CHECK(32 > LENGTH(slot)),
                 status TEXT NOT NULL CHECK(64 > LENGTH(status)),
+                created_at TIMESTAMPTZ NOT NULL,
+                updated_at TIMESTAMPTZ,
                 deleted_at TIMESTAMPTZ
                 );
 
