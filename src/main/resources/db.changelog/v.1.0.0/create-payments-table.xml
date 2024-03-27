@@ -12,7 +12,7 @@
                 total_price DECIMAL NOT NULL CHECK (total_price >= 0),
                 created_at TIMESTAMPTZ NOT NULL,
                 expires_at TIMESTAMPTZ NOT NULL,
-                reservation_id BIGINT NOT NULL REFERENCES reservations(id)
+                reservation_id BIGINT NOT NULL REFERENCES reservations(id),
                 user_id BIGINT NOT NULL REFERENCES users(id)
                 );
         </sql>

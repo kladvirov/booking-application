@@ -8,8 +8,8 @@
         <sql>
             CREATE TABLE IF NOT EXISTS tokens (
                 id BIGSERIAL PRIMARY KEY,
-                token VARCHAR(128) NOT NULL,
-                refresh_token VARCHAR(128) NOT NULL,
+                token VARCHAR(512) NOT NULL,
+                refresh_token VARCHAR(512) NOT NULL,
                 expires_at TIMESTAMPTZ NOT NULL,
                 user_id BIGINT NOT NULL REFERENCES users(id)
                 );

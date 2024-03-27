@@ -10,13 +10,6 @@
                 user_id BIGINT NOT NULL REFERENCES users(id),
                 role_id BIGINT NOT NULL REFERENCES roles(id)
             );
-
-            ALTER TABLE users
-                ADD COLUMN search tsvector
-                    GENERATED ALWAYS AS (to_tsvector('russian', replace(
-                            users.first_name  ' '  users.last_name  ' '  users.username,
-                            'ё', 'е'))) STORED;
-            CREATE INDEX users_search_index ON users USING GIN (search);
         </sql>
     </changeSet>
 

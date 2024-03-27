@@ -8,10 +8,10 @@
         <sql>
             CREATE TABLE IF NOT EXISTS notifications (
                 id BIGSERIAL PRIMARY KEY,
-                header VARCHAR(32) NOT NULL,
-                body VARCHAR(256) NOT NULL,
+                header VARCHAR(256) NOT NULL,
+                body VARCHAR(2048) NOT NULL,
                 created_at TIMESTAMPTZ NOT NULL,
-                reservation_id BIGINT NOT NULL REFERENCES reservations(id)
+                reservation_id BIGINT NOT NULL REFERENCES reservations(id),
                 user_id BIGINT NOT NULL REFERENCES users(id)
                 );
         </sql>
