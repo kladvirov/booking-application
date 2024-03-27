@@ -9,7 +9,6 @@
             CREATE TABLE IF NOT EXISTS sessions (
                 id BIGSERIAL PRIMARY KEY,
                 ip CIDR NOT NULL,
-                browser TEXT NOT NULL CHECK(512 > LENGTH(browser)),
                 user_agent TEXT NOT NULL CHECK(512 > LENGTH(user_agent)),
                 operation_system TEXT NOT NULL CHECK(512 > LENGTH(operation_system)),
                 status TEXT NOT NULL CHECK(64 > LENGTH(status)),
