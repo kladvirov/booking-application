@@ -10,12 +10,6 @@
                 authority_id BIGINT NOT NULL REFERENCES authorities(id),
                 role_id BIGINT NOT NULL REFERENCES roles(id)
             );
-
---             ALTER TABLE authorities_roles_link
---                 ADD CONSTRAINT authorities_roles_links_authority_id_fkey FOREIGN KEY (authority_id) REFERENCES authorities (id);
---
---             ALTER TABLE authorities_roles_link
---                 ADD CONSTRAINT authorities_roles_links_role_id_fkey FOREIGN KEY (role_id) REFERENCES roles (id);
         </sql>
     </changeSet>
 

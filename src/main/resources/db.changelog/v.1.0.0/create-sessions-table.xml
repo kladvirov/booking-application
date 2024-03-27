@@ -9,9 +9,9 @@
             CREATE TABLE IF NOT EXISTS sessions (
                 id BIGSERIAL PRIMARY KEY,
                 ip CIDR NOT NULL,
-                browser VARCHAR(32) NOT NULL,
-                user_agent VARCHAR(64) NOT NULL,
-                operation_system VARCHAR(32) NOT NULL,
+                browser TEXT NOT NULL CHECK(512 > LENGTH(browser)),
+                user_agent TEXT NOT NULL CHECK(512 > LENGTH(user_agent)),
+                operation_system TEXT NOT NULL CHECK(512 > LENGTH(operation_system)),
                 last_activity TIMESTAMPTZ,
                 user_id BIGINT NOT NULL REFERENCES users(id)
                 );

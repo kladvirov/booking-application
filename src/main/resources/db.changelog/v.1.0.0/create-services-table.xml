@@ -9,8 +9,8 @@
             CREATE TABLE IF NOT EXISTS services (
                 id BIGSERIAL PRIMARY KEY,
                 price DECIMAL NOT NULL CHECK (price >= 0),
-                name VARCHAR(128) NOT NULL,
-                location VARCHAR(256) NOT NULL,
+                name TEXT NOT NULL CHECK(256 > LENGTH(name)),
+                location TEXT NOT NULL CHECK(1024 > LENGTH(location)),
                 number BIGINT NOT NULL,
                 is_available BOOLEAN NOT NULL
                 );

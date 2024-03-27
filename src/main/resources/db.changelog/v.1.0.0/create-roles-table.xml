@@ -8,7 +8,7 @@
     <sql>
         CREATE TABLE IF NOT EXISTS roles (
             id BIGSERIAL PRIMARY KEY,
-            name VARCHAR(32) NOT NULL UNIQUE
+            name TEXT NOT NULL CHECK(64 > LENGTH(name)) UNIQUE
             );
     </sql>
     </changeSet>

@@ -8,7 +8,7 @@
         <sql>
             CREATE TABLE IF NOT EXISTS verifications (
                 id BIGSERIAL PRIMARY KEY,
-                token VARCHAR(128) NOT NULL,
+                token TEXT NOT NULL CHECK(128 > LENGTH(token)),
                 is_completed BOOLEAN NOT NULL,
                 expires_at TIMESTAMPTZ NOT NULL,
                 user_id BIGINT NOT NULL REFERENCES users(id)

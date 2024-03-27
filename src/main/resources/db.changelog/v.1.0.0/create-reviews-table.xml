@@ -8,7 +8,7 @@
         <sql>
             CREATE TABLE IF NOT EXISTS reviews (
                 id BIGSERIAL PRIMARY KEY,
-                comment VARCHAR(1024),
+                comment TEXT NOT NULL CHECK(2048 > LENGTH(comment)),
                 mark INT NOT NULL CHECK (mark >= 1 AND 5 >= mark),
                 created_at TIMESTAMPTZ NOT NULL,
                 user_id INT NOT NULL REFERENCES users(id),
