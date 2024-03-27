@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="2" author="wladponomar@gmail.com">
+        <comment>Inserting test-data in services table</comment>
+        <sql>
+            INSERT INTO services (price, name, location, slot, status, created_at)
+            VALUES
+                (1000.00, 'Ресторан "Белый лебедь"', 'Минск, ул. Советская, 15', 'T11S-4', 'AVAILABLE', '2022-01-23 12:10:10'),
+                (2000.00, 'Отель "Золотой ключ"', 'Минск, пр. Независимости, 22', 'F2RN-5', 'UNAVAILABLE', '2023-10-10 10:10:32'),
+                (1500.00, 'Кафе "Уютное местечко"', 'Минск, ул. Коммунистическая, 7', 'T3S-1', 'DELETED', '2024-03-12 12:12:21'),
+                (2500.00, 'Гостиница "Приют джавы"', 'Минск, ул. Ленина, 34', 'F4RN-12', 'AVAILABLE', '2024-02-12 10:49:22'),
+                (3000.00, 'Ресторан "Вкус жизни"', 'Минск, пр. Победителей, 45', 'T12S-2', 'AVAILABLE', '2023-03-27 12:59:42');
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

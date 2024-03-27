@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="1" author="wladponomar@gmail.com">
+        <comment>Inserting test-data in users table</comment>
+        <sql>
+            INSERT INTO users (first_name, last_name, login, password, email, status, balance, created_at)
+            VALUES
+                ('Андрей', 'Юрьев', 'yurueu', 'i_hate_python228', 'yurueu@example.com', 'VERIFIED', 1000000.00, '2024-03-26 18:59:00'),
+                ('Петр', 'Петров', 'petrov', 'qwerty', 'petrov@example.com', 'VERIFIED', 2000.00, '2024-03-27 12:57:42'),
+                ('Сергей', 'Сергеев', 'sergeev', 'blabla1337LOL', 'sergeev@example.com', 'DELETED', 3000.00, '2023-02-12 11:28:31'),
+                ('Андрей', 'Суслов', 'suslov228', 'AUPPRB_femboy', 'suslov@example.com', 'NOT_VERIFIED', 4000.00, '2024-01-14 10:48:34'),
+                ('Дмитрий', 'Дмитриев', 'dmitriev', '12345678', 'dmitriev@example.com', 'VERIFIED', 5000.00, '2023-12-27 22:51:44');
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

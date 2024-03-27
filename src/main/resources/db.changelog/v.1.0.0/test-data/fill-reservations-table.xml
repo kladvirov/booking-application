@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="3" author="wladponomar@gmail.com">
+        <comment>Inserting test-data in reservations table</comment>
+        <sql>
+            INSERT INTO reservations (status, ordered_at, expires_at, user_id)
+            VALUES
+                ('PAID', '2024-03-27 11:59:42', '2024-03-27 17:59:42', 1),
+                ('PAID', '2024-03-26 12:00:00', '2024-03-26 18:00:00', 2),
+                ('EXPIRED', '2024-02-26 11:45:00', '2024-02-26 17:45:00', 3),
+                ('CREATED', '2024-03-27 14:25:30', '2024-03-27 20:45:30', 4),
+                ('PAID', '2024-03-12 10:00:00', '2024-03-12 16:00:00', 5);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
