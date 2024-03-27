@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
@@ -11,8 +10,8 @@
                 comment TEXT NOT NULL CHECK(2048 > LENGTH(comment)),
                 mark INT NOT NULL CHECK (mark >= 1 AND 5 >= mark),
                 created_at TIMESTAMPTZ NOT NULL,
-                user_id INT NOT NULL REFERENCES users(id),
-                service_id INT NOT NULL REFERENCES services(id)
+                user_id BIGINT NOT NULL REFERENCES users(id),
+                service_id BIGINT NOT NULL REFERENCES services(id)
                 );
         </sql>
     </changeSet>

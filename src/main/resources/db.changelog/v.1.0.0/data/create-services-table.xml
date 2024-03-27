@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
@@ -8,14 +7,14 @@
         <sql>
             CREATE TABLE IF NOT EXISTS services (
                 id BIGSERIAL PRIMARY KEY,
-                price DECIMAL NOT NULL CHECK (price >= 0),
-                name TEXT NOT NULL CHECK(256 > LENGTH(name)),
-                location TEXT NOT NULL CHECK(1024 > LENGTH(location)),
+                price_per_hour DECIMAL NOT NULL CHECK (price_per_hour >= 0),
                 slot TEXT NOT NULL CHECK(32 > LENGTH(slot)),
                 status TEXT NOT NULL CHECK(64 > LENGTH(status)),
                 created_at TIMESTAMPTZ NOT NULL,
                 updated_at TIMESTAMPTZ,
-                deleted_at TIMESTAMPTZ
+                deleted_at TIMESTAMPTZ,
+                service_provider_id BIGINT NOT NULL REFERENCES service_providers(id),
+                UNIQUE (slot, service_provider_id)
                 );
 
             ALTER TABLE services

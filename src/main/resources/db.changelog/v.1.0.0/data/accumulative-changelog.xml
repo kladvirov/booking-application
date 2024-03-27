@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
@@ -7,6 +6,7 @@
     <include file="create-roles-table.xml" relativeToChangelogFile="true"/>
     <include file="create-users-table.xml" relativeToChangelogFile="true"/>
     <include file="create-reservations-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-service-providers-table.xml" relativeToChangelogFile="true"/>
     <include file="create-services-table.xml" relativeToChangelogFile="true"/>
     <include file="create-authorities-table.xml" relativeToChangelogFile="true"/>
     <include file="create-payments-table.xml" relativeToChangelogFile="true"/>
@@ -16,6 +16,5 @@
     <include file="create-sessions-table.xml" relativeToChangelogFile="true"/>
     <include file="create-tokens-table.xml" relativeToChangelogFile="true"/>
     <include file="create-verifications-table.xml" relativeToChangelogFile="true"/>
-    <include file="create-reservations-services-links-table.xml" relativeToChangelogFile="true"/>
     <include file="create-authorities-roles-links-table.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
