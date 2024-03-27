@@ -17,8 +17,15 @@
                 balance DECIMAL NOT NULL CHECK (balance >= 0),
                 created_at TIMESTAMPTZ NOT NULL,
                 deleted_at TIMESTAMPTZ,
-                updated_at TIMESTAMPTZ,
+                updated_at TIMESTAMPTZ
                 );
+
+            ALTER TABLE users
+                ADD COLUMN search tsvector
+                    GENERATED ALWAYS AS (to_tsvector('russian', replace(
+                            users.first_name || ' ' || users.last_name || ' ' || users.login,
+                            'ё', 'е'))) STORED;
+            CREATE INDEX users_search_index ON users USING GIN (search);
         </sql>
     </changeSet>
 
