@@ -11,8 +11,9 @@
                 price DECIMAL NOT NULL CHECK (price >= 0),
                 name TEXT NOT NULL CHECK(256 > LENGTH(name)),
                 location TEXT NOT NULL CHECK(1024 > LENGTH(location)),
-                number BIGINT NOT NULL,
-                is_available BOOLEAN NOT NULL
+                slot TEXT NOT NULL CHECK(32 > LENGTH(slot)),
+                status TEXT NOT NULL CHECK(64 > LENGTH(status)),
+                deleted_at TIMESTAMPTZ
                 );
 
             ALTER TABLE services

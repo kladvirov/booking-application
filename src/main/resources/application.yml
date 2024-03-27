@@ -5,4 +5,4 @@ spring:
     url: jdbc:postgresql://localhost:5432/postgres
     password: postgres
   liquibase:
-    change-log: db.changelog/main-changelog.xml
+    change-log: db.changelog/changelog.xml

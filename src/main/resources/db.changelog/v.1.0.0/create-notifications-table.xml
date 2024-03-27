@@ -11,8 +11,9 @@
                 header TEXT NOT NULL CHECK(256 > LENGTH(header)),
                 body TEXT NOT NULL CHECK(2048 > LENGTH(body)),
                 created_at TIMESTAMPTZ NOT NULL,
-                reservation_id BIGINT NOT NULL REFERENCES reservations(id),
-                user_id BIGINT NOT NULL REFERENCES users(id)
+                reservation_id BIGINT REFERENCES reservations(id),
+                user_id BIGINT NOT NULL REFERENCES users(id),
+                payment_id BIGINT REFERENCES payments(id)
                 );
         </sql>
     </changeSet>
