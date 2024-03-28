@@ -5,9 +5,9 @@
 
     <include file="create-roles-table.xml" relativeToChangelogFile="true"/>
     <include file="create-users-table.xml" relativeToChangelogFile="true"/>
-    <include file="create-reservations-table.xml" relativeToChangelogFile="true"/>
     <include file="create-service-providers-table.xml" relativeToChangelogFile="true"/>
     <include file="create-services-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-reservations-table.xml" relativeToChangelogFile="true"/>
     <include file="create-authorities-table.xml" relativeToChangelogFile="true"/>
     <include file="create-payments-table.xml" relativeToChangelogFile="true"/>
     <include file="create-reviews-table.xml" relativeToChangelogFile="true"/>
