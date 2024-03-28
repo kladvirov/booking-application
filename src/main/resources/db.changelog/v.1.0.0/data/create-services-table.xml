@@ -16,11 +16,6 @@
                 service_provider_id BIGINT NOT NULL REFERENCES service_providers(id),
                 UNIQUE (slot, service_provider_id)
                 );
-
-            ALTER TABLE services
-                ADD COLUMN search tsvector
-                    GENERATED ALWAYS AS (to_tsvector('russian', replace(services.name, 'ё', 'е'))) STORED;
-            CREATE INDEX services_search_index ON services USING GIN (search);
         </sql>
     </changeSet>
 

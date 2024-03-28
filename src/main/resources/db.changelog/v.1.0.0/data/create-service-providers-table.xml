@@ -15,6 +15,11 @@
                 updated_at TIMESTAMPTZ,
                 deleted_at TIMESTAMPTZ
                 );
+
+            ALTER TABLE service_providers
+                ADD COLUMN search tsvector
+                    GENERATED ALWAYS AS (to_tsvector('russian', replace(service_providers.name, 'ё', 'е'))) STORED;
+            CREATE INDEX service_providers_search_index ON service_providers USING GIN (search);
         </sql>
     </changeSet>
 
