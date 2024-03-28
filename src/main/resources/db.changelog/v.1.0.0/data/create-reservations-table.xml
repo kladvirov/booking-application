@@ -1,0 +1,21 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="9" author="wladponomar@gmail.com">
+        <sql>
+            CREATE TABLE IF NOT EXISTS reservations (
+                id BIGSERIAL PRIMARY KEY,
+                status TEXT NOT NULL CHECK(64 > LENGTH(status)),
+                date_from TIMESTAMPTZ NOT NULL,
+                date_to TIMESTAMPTZ NOT NULL,
+                ordered_at TIMESTAMPTZ NOT NULL,
+                expires_at TIMESTAMPTZ NOT NULL,
+                user_id BIGINT NOT NULL REFERENCES users(id),
+                service_id BIGINT NOT NULL REFERENCES services(id)
+                );
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
