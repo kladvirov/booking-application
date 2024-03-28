@@ -14,7 +14,7 @@
                 last_activity TIMESTAMPTZ,
                 created_at TIMESTAMPTZ NOT NULL,
                 updated_at TIMESTAMPTZ,
-                deleted_at TIMESTAMPTZ
+                deleted_at TIMESTAMPTZ,
                 user_id BIGINT NOT NULL REFERENCES users(id)
                 );
         </sql>
