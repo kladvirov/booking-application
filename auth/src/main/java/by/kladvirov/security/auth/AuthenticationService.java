@@ -5,6 +5,7 @@ import by.kladvirov.dto.TokenDto;
 import by.kladvirov.dto.UserCreationDto;
 import by.kladvirov.dto.UserDto;
 import by.kladvirov.entity.User;
+import by.kladvirov.entity.redis.Token;
 import by.kladvirov.enums.UserStatus;
 import by.kladvirov.exception.ServiceException;
 import by.kladvirov.mapper.TokenMapper;
@@ -66,7 +67,7 @@ public class AuthenticationService {
     @Transactional
     public TokenDto refreshToken(String header) {
         if (header == null || !header.startsWith("Bearer ")) {
-            throw new RuntimeException("change to custom exception");
+            throw new RuntimeException("Invalid format");
         }
 
         String refreshToken = header.substring(7);
@@ -76,10 +77,11 @@ public class AuthenticationService {
 
         if (jwtService.isTokenValid(refreshToken, user)) {
             TokenDto tokenDto = jwtService.generateTokenDto(user);
-            if (!tokenService.existsByRefreshToken(refreshToken)) {
+            if (tokenService.findByRefreshToken(refreshToken) == null) {
                 throw new ServiceException("Invalid token", HttpStatus.FORBIDDEN);
             }
-            tokenService.deleteByRefreshToken(refreshToken);
+            Token foundToken = tokenService.findByRefreshToken(refreshToken);
+            tokenService.delete(foundToken);
             tokenService.save(tokenMapper.toEntity(tokenDto, user.getId()));
             return tokenDto;
         }
@@ -91,7 +93,8 @@ public class AuthenticationService {
     public void logout(String header, UserDetails userDetails) {
         String token = header.substring(7);
         if (jwtService.isTokenValid(token, userDetails)) {
-            tokenService.deleteByToken(token);
+            Token foundToken = tokenService.findByAccessToken(token);
+            tokenService.delete(foundToken);
         }
     }
 

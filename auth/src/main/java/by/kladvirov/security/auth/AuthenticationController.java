@@ -26,7 +26,7 @@ public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
-    @GetMapping("/get-user-info")
+    @GetMapping("/get-info")
     public ResponseEntity<UserInfoDto> fetchUser(@AuthenticationPrincipal UserDetails userDetails) {
         UserInfoDto userInfoDto = new UserInfoDto(userDetails.getUsername(), userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -44,7 +44,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.login(request));
     }
 
-    @PostMapping("/refresh-token")
+    @PostMapping("/refresh")
     public TokenDto refresh(@RequestHeader(HttpHeaders.AUTHORIZATION) String header) {
         return authenticationService.refreshToken(header);
     }
