@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 public class ServiceException extends RuntimeException {
 
     private HttpStatus httpStatus;
+
     public ServiceException(String message) {
         super(message);
     }

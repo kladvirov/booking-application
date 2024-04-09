@@ -1,6 +1,7 @@
 package by.kladvirov.dto;
 
 import by.kladvirov.enums.Status;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,7 @@ public class ReservationDto {
     private ZonedDateTime dateFrom;
 
     @NotNull(message = "Date to cannot be empty")
+    @FutureOrPresent
     private ZonedDateTime dateTo;
 
     @NotNull(message = "Order date cannot be empty")

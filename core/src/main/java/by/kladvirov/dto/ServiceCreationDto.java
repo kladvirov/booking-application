@@ -24,7 +24,7 @@ public class ServiceCreationDto {
     private String slot;
 
     @NotNull(message = "Status cannot be empty")
-    @Size(min = 2, max = 32, message = "Slot name should be in diapason from 2 to 32 characters")
+    @Size(min = 2, max = 64, message = "Status name should be in diapason from 2 to 64 characters")
     private Status status;
 
     @NotNull(message = "Creation date cannot be null")

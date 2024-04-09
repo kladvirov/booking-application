@@ -3,6 +3,7 @@ package by.kladvirov.dto;
 import by.kladvirov.enums.Status;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,7 @@ public class ServiceProviderDto {
     private String type;
 
     @NotNull(message = "Status cannot be null")
+    @Size(min = 2, max = 64, message = "Status name should be in diapason from 2 to 64 characters")
     private Status status;
 
     @NotNull(message = "Creation date cannot be null")
