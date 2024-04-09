@@ -12,12 +12,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreRemove;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -28,6 +30,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLRestriction("status <> 'DELETED'")
 @Table(name = "service_providers")
 public class ServiceProvider {
 
@@ -60,6 +63,13 @@ public class ServiceProvider {
     @PreRemove
     public void setStatus() {
         this.status = Status.DELETED;
+        this.deletedAt = ZonedDateTime.now();
+        this.updatedAt = this.deletedAt;
+    }
+
+    @PreUpdate
+    public void setUpdatedAt(){
+        this.updatedAt = ZonedDateTime.now();
     }
 
     @PrePersist
