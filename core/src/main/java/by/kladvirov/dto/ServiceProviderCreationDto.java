@@ -33,11 +33,9 @@ public class ServiceProviderCreationDto {
     @NotNull(message = "Creation date cannot be empty")
     private ZonedDateTime createdAt;
 
-    @Positive
     @NotNull
     private ZonedDateTime updatedAt;
 
-    @Positive
     @NotNull
     private ZonedDateTime deletedAt;
 

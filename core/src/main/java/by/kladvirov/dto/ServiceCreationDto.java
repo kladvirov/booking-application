@@ -30,11 +30,9 @@ public class ServiceCreationDto {
     @NotNull(message = "Creation date cannot be null")
     private ZonedDateTime createdAt;
 
-    @Positive
     @NotNull
     private ZonedDateTime updatedAt;
 
-    @Positive
     @NotNull
     private ZonedDateTime deletedAt;
 
