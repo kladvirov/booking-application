@@ -1,0 +1,19 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="8" author="wladponomar@gmail.com">
+        <comment>Inserting test-data in service table</comment>
+        <sql>
+            INSERT INTO service_providers (name, location, type, status, created_at, updated_at, deleted_at)
+            VALUES
+                ('Gascinec', 'Minsk', 'Hotel', 'AVAILABLE', '2000-01-01 00:00:00', '2024-04-04 12:00:00', NULL),
+                ('Prezidentsky', 'Minsk', 'Hotel', 'AVAILABLE', '1999-01-01 00:00:00', '2024-04-04 10:00:00', NULL),
+                ('vasilki', 'Minsk', 'Restourant', 'AVAILABLE', '2015-06-25 00:00:00', '2024-04-04 12:00:00', NULL),
+                ('Vladernya', 'Astroshici', 'Club', 'UNAVAILABLE', '2022-02-22 00:00:00', '2023-08-31 23:59:59', '2023-08-31 23:59:59'),
+                ('Kvasich', 'Minsk', 'Restourant', 'AVAILABLE', '2015-06-25 00:00:00', '2024-04-04 12:00:00', NULL);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
