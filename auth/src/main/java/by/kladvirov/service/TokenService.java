@@ -4,12 +4,12 @@ import by.kladvirov.entity.redis.Token;
 
 public interface TokenService {
 
-    Boolean existsByRefreshToken(String token);
+    Token findByRefreshToken(String refreshToken);
+
+    Token findByAccessToken(String accessToken);
 
     void save(Token token);
 
-    void deleteByToken(String token);
-
-    void deleteByRefreshToken(String token);
+    void delete(Token token);
 
 }

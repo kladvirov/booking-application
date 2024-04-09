@@ -4,14 +4,12 @@ import by.kladvirov.entity.redis.Token;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 
+import java.util.Optional;
+
 public interface TokenRepository extends JpaRepository<Token, Long> {
 
-    Boolean existsByRefreshToken(String token);
+    Optional<Token> findByRefreshToken(String refreshToken);
 
-    @Modifying
-    void deleteByToken(String token);
-
-    @Modifying
-    void deleteByRefreshToken(String token);
+    Optional<Token> findByToken(String token);
 
 }
