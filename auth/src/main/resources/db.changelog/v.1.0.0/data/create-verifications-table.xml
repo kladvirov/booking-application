@@ -3,12 +3,13 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-    <changeSet id="5" author="wladponomar@gmail.com">
+    <changeSet id="6" author="wladponomar@gmail.com">
         <sql>
-            CREATE TABLE IF NOT EXISTS tokens (
+            CREATE TABLE IF NOT EXISTS verifications (
                 id BIGSERIAL PRIMARY KEY,
-                token TEXT NOT NULL CHECK(512 > LENGTH(token)),
-                refresh_token TEXT NOT NULL CHECK(512 > LENGTH(refresh_token)),
+                token TEXT NOT NULL CHECK(128 > LENGTH(token)),
+                is_completed BOOLEAN NOT NULL,
+                expires_at TIMESTAMPTZ NOT NULL,
                 user_id BIGINT NOT NULL REFERENCES users(id)
                 );
         </sql>
