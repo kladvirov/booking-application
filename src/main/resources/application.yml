@@ -1,8 +1,0 @@
-spring:
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    username: postgres
-    url: jdbc:postgresql://localhost:5432/postgres
-    password: postgres
-  liquibase:
-    change-log: db.changelog/changelog.xml
