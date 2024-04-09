@@ -29,7 +29,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('READ_PAYMENTS')") // don't forget to change
+    @PreAuthorize("hasAuthority('READ_USERS')")
     public ResponseEntity<UserDto> getById(@PathVariable("id") Long id) {
         return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
     }
