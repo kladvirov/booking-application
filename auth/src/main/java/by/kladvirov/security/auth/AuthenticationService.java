@@ -55,7 +55,7 @@ public class AuthenticationService {
     @Transactional
     public TokenDto register(UserCreationDto request) {
         if (userService.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("The following email is already taken");
+            throw new ServiceException("The following email is already taken");
         }
         request.setPassword(passwordEncoder.encode(request.getPassword()));
         UserDto user = userService.save(request);
