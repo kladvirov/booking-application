@@ -14,7 +14,6 @@
     <include file="create-notifications-table.xml" relativeToChangelogFile="true"/>
     <include file="create-users-roles-links-table.xml" relativeToChangelogFile="true"/>
     <include file="create-sessions-table.xml" relativeToChangelogFile="true"/>
-    <include file="create-tokens-table.xml" relativeToChangelogFile="true"/>
     <include file="create-verifications-table.xml" relativeToChangelogFile="true"/>
     <include file="create-authorities-roles-links-table.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
