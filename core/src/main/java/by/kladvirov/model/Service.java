@@ -34,7 +34,7 @@ import java.time.ZonedDateTime;
 public class Service {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "price_per_hour")
