@@ -26,20 +26,14 @@ public class ServiceServiceImpl implements ServiceService {
     @Transactional(readOnly = true)
     @Override
     public ServiceDto findById(Long id) {
-        by.kladvirov.model.Service service = repository.findById(id).orElseThrow(() -> new ServiceException("Cannot find service by id in service", HttpStatus.BAD_REQUEST));
-        if(service.getStatus() == Status.DELETED){
-            return null;
-        }
-        return mapper.toDto(service);
+        return mapper.toDto(repository.findById(id)
+                .orElseThrow(() -> new ServiceException("Cannot find service by id in service", HttpStatus.BAD_REQUEST)));
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<ServiceDto> findAll() {
-        return mapper.toDto(repository.findAll().stream()
-                .filter(service -> service.getStatus() != Status.DELETED)
-                .toList()
-        );
+        return mapper.toDto(repository.findAll());
     }
 
     @Transactional
@@ -52,7 +46,8 @@ public class ServiceServiceImpl implements ServiceService {
     @Transactional
     @Override
     public void update(Long id, ServiceCreationDto dto) {
-        by.kladvirov.model.Service service = repository.findById(id).orElseThrow(() -> new ServiceException("Cannot update service in service", HttpStatus.BAD_REQUEST));
+        by.kladvirov.model.Service service = repository.findById(id)
+                .orElseThrow(() -> new ServiceException("Cannot update service in service", HttpStatus.BAD_REQUEST));
         by.kladvirov.model.Service mappedService = mapper.toEntity(dto);
         updateService(service, mappedService);
         repository.save(service);

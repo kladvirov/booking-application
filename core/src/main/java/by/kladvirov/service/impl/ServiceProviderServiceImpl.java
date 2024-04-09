@@ -28,19 +28,13 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
     @Transactional(readOnly = true)
     @Override
     public ServiceProviderDto findById(Long id) {
-        ServiceProviderDto dto = mapper.toDto(repository.findById(id).orElseThrow(() -> new ServiceException("Cannot find service provider by id in service", HttpStatus.BAD_REQUEST)));
-        if(dto.getStatus() == Status.DELETED){
-            return null;
-        }
-        return dto;
+        return mapper.toDto(repository.findById(id)
+                .orElseThrow(() -> new ServiceException("Cannot find service provider by id in service", HttpStatus.BAD_REQUEST)));
     }
 
     @Transactional(readOnly = true)
     public List<ServiceProviderDto> findAll() {
-        return mapper.toDto(repository.findAll().stream()
-                .filter(serviceProvider -> serviceProvider.getStatus() != Status.DELETED)
-                .toList()
-        );
+        return mapper.toDto(repository.findAll());
     }
 
     @Transactional
@@ -54,7 +48,8 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 
     @Transactional
     public void update(Long id, ServiceProviderCreationDto dto) {
-        ServiceProvider serviceProvider = repository.findById(id).orElseThrow(() -> new ServiceException("Cannot update service provider in service", HttpStatus.BAD_REQUEST));
+        ServiceProvider serviceProvider = repository.findById(id)
+                .orElseThrow(() -> new ServiceException("Cannot update service provider in service", HttpStatus.BAD_REQUEST));
         ServiceProvider mappedServiceProvider = mapper.toEntity(dto);
         updateServiceProvider(serviceProvider, mappedServiceProvider);
         repository.save(serviceProvider);

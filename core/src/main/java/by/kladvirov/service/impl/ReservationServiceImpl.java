@@ -27,20 +27,14 @@ public class ReservationServiceImpl implements ReservationService {
     @Transactional(readOnly = true)
     @Override
     public ReservationDto findById(Long id){
-        Reservation reservation = repository.findById(id).orElseThrow(() -> new ServiceException("Cannot find reservation by id", HttpStatus.BAD_REQUEST));
-        if (reservation.getStatus() == Status.DELETED){
-            return null;
-        }
-        return mapper.toDto(reservation);
+        return mapper.toDto(repository.findById(id)
+                .orElseThrow(() -> new ServiceException("Cannot find reservation by id", HttpStatus.BAD_REQUEST)));
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<ReservationDto> findAll() {
-        return mapper.toDto(repository.findAll().stream()
-                .filter(reservation -> reservation.getStatus() != Status.DELETED)
-                .toList()
-        );
+        return mapper.toDto(repository.findAll());
     }
 
     @Transactional
@@ -59,7 +53,8 @@ public class ReservationServiceImpl implements ReservationService {
         if (hasReservation(dto)) {
             throw new ServiceException("Cannot update reservation in service because there is at this time a reservation", HttpStatus.BAD_REQUEST);
         }
-        Reservation reservation = repository.findById(id).orElseThrow(() -> new ServiceException("Cannot update reservation in service", HttpStatus.BAD_REQUEST));
+        Reservation reservation = repository.findById(id)
+                .orElseThrow(() -> new ServiceException("Cannot update reservation in service", HttpStatus.BAD_REQUEST));
         Reservation mappedReservation = mapper.toEntity(dto);
         updateReservation(reservation, mappedReservation);
         repository.save(reservation);
