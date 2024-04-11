@@ -7,27 +7,26 @@
         <comment>Inserting test-data in authorities table</comment>
         <sql>
             INSERT INTO authorities (name)
-            VALUES
-                ('READ_RESERVATIONS'),
-                ('CREATE_RESERVATIONS'),
-                ('UPDATE_RESERVATIONS'),
-                ('DELETE_RESERVATIONS'),
-                ('READ_SERVICES'),
-                ('CREATE_SERVICES'),
-                ('UPDATE_SERVICES'),
-                ('DELETE_SERVICES'),
-                ('READ_PAYMENTS'),
-                ('CREATE_PAYMENTS'),
-                ('UPDATE_PAYMENTS'),
-                ('DELETE_PAYMENTS'),
-                ('READ_REVIEWS'),
-                ('CREATE_REVIEWS'),
-                ('UPDATE_REVIEWS'),
-                ('DELETE_REVIEWS'),
-                ('READ_PROVIDERS'),
-                ('CREATE_PROVIDERS'),
-                ('UPDATE_PROVIDERS'),
-                ('DELETE_PROVIDERS');
+            VALUES ('READ_RESERVATIONS'),
+                   ('CREATE_RESERVATIONS'),
+                   ('UPDATE_RESERVATIONS'),
+                   ('DELETE_RESERVATIONS'),
+                   ('READ_SERVICES'),
+                   ('CREATE_SERVICES'),
+                   ('UPDATE_SERVICES'),
+                   ('DELETE_SERVICES'),
+                   ('READ_PAYMENTS'),
+                   ('CREATE_PAYMENTS'),
+                   ('UPDATE_PAYMENTS'),
+                   ('DELETE_PAYMENTS'),
+                   ('READ_REVIEWS'),
+                   ('CREATE_REVIEWS'),
+                   ('UPDATE_REVIEWS'),
+                   ('DELETE_REVIEWS'),
+                   ('READ_PROVIDERS'),
+                   ('CREATE_PROVIDERS'),
+                   ('UPDATE_PROVIDERS'),
+                   ('DELETE_PROVIDERS');
         </sql>
     </changeSet>
 

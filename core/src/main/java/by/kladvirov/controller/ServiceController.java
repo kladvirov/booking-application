@@ -33,7 +33,7 @@ public class ServiceController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ServiceDto>> findAll(){
+    public ResponseEntity<List<ServiceDto>> findAll() {
         return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
     }
 
@@ -56,10 +56,11 @@ public class ServiceController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> delete (
+    public ResponseEntity<HttpStatus> delete(
             @PathVariable Long id
     ) {
         service.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 }

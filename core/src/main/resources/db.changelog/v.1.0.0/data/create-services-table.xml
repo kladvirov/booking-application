@@ -5,16 +5,48 @@
 
     <changeSet id="12" author="wladponomar@gmail.com">
         <sql>
-            CREATE TABLE IF NOT EXISTS services (
-                id BIGSERIAL PRIMARY KEY,
-                price_per_hour DECIMAL NOT NULL CHECK (price_per_hour >= 0),
-                slot TEXT NOT NULL CHECK(32 > LENGTH(slot)),
-                status TEXT NOT NULL CHECK(64 > LENGTH(status)),
+            CREATE TABLE IF NOT EXISTS services
+            (
+                id
+                BIGSERIAL
+                PRIMARY
+                KEY,
+                price_per_hour
+                DECIMAL
+                NOT
+                NULL
+                CHECK
+            (
+                price_per_hour
+                >=
+                0
+            ),
+                slot TEXT NOT NULL CHECK
+            (
+                32 >
+                LENGTH
+            (
+                slot
+            )),
+                status TEXT NOT NULL CHECK
+            (
+                64 >
+                LENGTH
+            (
+                status
+            )),
                 created_at TIMESTAMPTZ NOT NULL,
                 updated_at TIMESTAMPTZ,
                 deleted_at TIMESTAMPTZ,
-                service_provider_id BIGINT NOT NULL REFERENCES service_providers(id),
-                UNIQUE (slot, service_provider_id)
+                service_provider_id BIGINT NOT NULL REFERENCES service_providers
+            (
+                id
+            ),
+                UNIQUE
+            (
+                slot,
+                service_provider_id
+            )
                 );
         </sql>
     </changeSet>

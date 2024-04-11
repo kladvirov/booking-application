@@ -4,12 +4,25 @@
    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <changeSet id="2" author="wladponomar@gmail.com">
-    <sql>
-        CREATE TABLE IF NOT EXISTS authorities (
-            id BIGSERIAL PRIMARY KEY,
-            name TEXT NOT NULL CHECK(128 > LENGTH(name)) UNIQUE
-            );
-    </sql>
+        <sql>
+            CREATE TABLE IF NOT EXISTS authorities
+            (
+                id
+                BIGSERIAL
+                PRIMARY
+                KEY,
+                name
+                TEXT
+                NOT
+                NULL
+                CHECK (
+                128 >
+                LENGTH
+            (
+                name
+            )) UNIQUE
+                );
+        </sql>
     </changeSet>
 
 </databaseChangeLog>

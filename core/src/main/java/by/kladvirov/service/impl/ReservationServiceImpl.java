@@ -2,7 +2,6 @@ package by.kladvirov.service.impl;
 
 import by.kladvirov.dto.ReservationCreationDto;
 import by.kladvirov.dto.ReservationDto;
-import by.kladvirov.enums.Status;
 import by.kladvirov.exception.ServiceException;
 import by.kladvirov.mapper.ReservationMapper;
 import by.kladvirov.model.Reservation;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -26,7 +24,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Transactional(readOnly = true)
     @Override
-    public ReservationDto findById(Long id){
+    public ReservationDto findById(Long id) {
         return mapper.toDto(repository.findById(id)
                 .orElseThrow(() -> new ServiceException("Cannot find reservation by id", HttpStatus.BAD_REQUEST)));
     }
@@ -83,8 +81,8 @@ public class ReservationServiceImpl implements ReservationService {
                         dto.getDateFrom().isBefore(reservation.getDateTo()) ||
                         dto.getDateTo().isAfter(reservation.getDateFrom()) &&
                                 dto.getDateFrom().isBefore(reservation.getDateTo()) ||
-                                        dto.getDateFrom().isBefore(reservation.getDateFrom()) &&
-                                                dto.getDateTo().isAfter(reservation.getDateTo())
+                        dto.getDateFrom().isBefore(reservation.getDateFrom()) &&
+                                dto.getDateTo().isAfter(reservation.getDateTo())
                 );
     }
 

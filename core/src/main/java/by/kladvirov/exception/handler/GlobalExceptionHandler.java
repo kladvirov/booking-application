@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ServiceException.class)
-    public ResponseEntity<ExceptionDto> handlesServiceException(HttpServletRequest request, ServiceException ex){
+    public ResponseEntity<ExceptionDto> handlesServiceException(HttpServletRequest request, ServiceException ex) {
         return new ResponseEntity<>(new ExceptionDto(ex.getMessage(), ex.getHttpStatus().value(), LocalDateTime.now(), request.getRequestURI()), ex.getHttpStatus());
     }
 

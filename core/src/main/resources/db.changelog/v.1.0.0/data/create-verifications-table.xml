@@ -5,12 +5,28 @@
 
     <changeSet id="6" author="wladponomar@gmail.com">
         <sql>
-            CREATE TABLE IF NOT EXISTS verifications (
-                id BIGSERIAL PRIMARY KEY,
-                token TEXT NOT NULL CHECK(128 > LENGTH(token)),
+            CREATE TABLE IF NOT EXISTS verifications
+            (
+                id
+                BIGSERIAL
+                PRIMARY
+                KEY,
+                token
+                TEXT
+                NOT
+                NULL
+                CHECK (
+                128 >
+                LENGTH
+            (
+                token
+            )),
                 is_completed BOOLEAN NOT NULL,
                 expires_at TIMESTAMPTZ NOT NULL,
-                user_id BIGINT NOT NULL REFERENCES users(id)
+                user_id BIGINT NOT NULL REFERENCES users
+            (
+                id
+            )
                 );
         </sql>
     </changeSet>

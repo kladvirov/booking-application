@@ -16,4 +16,5 @@ public class ExceptionDto {
     private LocalDateTime time;
 
     private String uri;
+
 }

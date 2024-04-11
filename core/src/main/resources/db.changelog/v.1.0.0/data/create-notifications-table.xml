@@ -5,14 +5,42 @@
 
     <changeSet id="10" author="wladponomar@gmail.com">
         <sql>
-            CREATE TABLE IF NOT EXISTS notifications (
-                id BIGSERIAL PRIMARY KEY,
-                header TEXT NOT NULL CHECK(256 > LENGTH(header)),
-                body TEXT NOT NULL CHECK(2048 > LENGTH(body)),
+            CREATE TABLE IF NOT EXISTS notifications
+            (
+                id
+                BIGSERIAL
+                PRIMARY
+                KEY,
+                header
+                TEXT
+                NOT
+                NULL
+                CHECK (
+                256 >
+                LENGTH
+            (
+                header
+            )),
+                body TEXT NOT NULL CHECK
+            (
+                2048 >
+                LENGTH
+            (
+                body
+            )),
                 created_at TIMESTAMPTZ NOT NULL,
-                reservation_id BIGINT REFERENCES reservations(id),
-                user_id BIGINT NOT NULL REFERENCES users(id),
-                payment_id BIGINT REFERENCES payments(id)
+                reservation_id BIGINT REFERENCES reservations
+            (
+                id
+            ),
+                user_id BIGINT NOT NULL REFERENCES users
+            (
+                id
+            ),
+                payment_id BIGINT REFERENCES payments
+            (
+                id
+            )
                 );
         </sql>
     </changeSet>

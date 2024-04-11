@@ -10,7 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PostRemove;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreRemove;
 import jakarta.persistence.PreUpdate;
@@ -22,7 +21,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -70,12 +68,12 @@ public class Service {
     }
 
     @PreUpdate
-    public void setUpdatedAt(){
+    public void setUpdatedAt() {
         this.updatedAt = ZonedDateTime.now();
     }
 
     @PrePersist
-    public void setField(){
+    public void setField() {
         this.createdAt = ZonedDateTime.now();
     }
 

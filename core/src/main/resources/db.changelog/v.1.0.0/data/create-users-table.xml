@@ -5,15 +5,63 @@
 
     <changeSet id="4" author="wladponomar@gmail.com">
         <sql>
-            CREATE TABLE IF NOT EXISTS users (
-                id BIGSERIAL PRIMARY KEY,
-                first_name TEXT NOT NULL CHECK(64 > LENGTH(first_name)),
-                last_name TEXT NOT NULL CHECK(64 > LENGTH(last_name)),
-                login TEXT NOT NULL CHECK(128 > LENGTH(login)) UNIQUE,
-                password TEXT NOT NULL CHECK(128 > LENGTH(password)),
-                email TEXT NOT NULL CHECK(256 > LENGTH(email)),
-                status TEXT NOT NULL CHECK(64 > LENGTH(status)),
-                balance DECIMAL NOT NULL CHECK (balance >= 0),
+            CREATE TABLE IF NOT EXISTS users
+            (
+                id
+                BIGSERIAL
+                PRIMARY
+                KEY,
+                first_name
+                TEXT
+                NOT
+                NULL
+                CHECK (
+                64 >
+                LENGTH
+            (
+                first_name
+            )),
+                last_name TEXT NOT NULL CHECK
+            (
+                64 >
+                LENGTH
+            (
+                last_name
+            )),
+                login TEXT NOT NULL CHECK
+            (
+                128 >
+                LENGTH
+            (
+                login
+            )) UNIQUE,
+                password TEXT NOT NULL CHECK
+            (
+                128 >
+                LENGTH
+            (
+                password
+            )),
+                email TEXT NOT NULL CHECK
+            (
+                256 >
+                LENGTH
+            (
+                email
+            )),
+                status TEXT NOT NULL CHECK
+            (
+                64 >
+                LENGTH
+            (
+                status
+            )),
+                balance DECIMAL NOT NULL CHECK
+            (
+                balance
+                >=
+                0
+            ),
                 created_at TIMESTAMPTZ NOT NULL,
                 deleted_at TIMESTAMPTZ,
                 updated_at TIMESTAMPTZ
