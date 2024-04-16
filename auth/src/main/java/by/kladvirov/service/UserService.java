@@ -3,7 +3,9 @@ package by.kladvirov.service;
 import by.kladvirov.dto.UserCreationDto;
 import by.kladvirov.dto.UserDto;
 import by.kladvirov.entity.User;
+import by.kladvirov.enums.UserStatus;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -34,5 +36,7 @@ public interface UserService {
     void delete(Long id);
 
     void updatePassword(String login, String password);
+
+    void updateStatus(Long id, UserStatus status);
 
 }

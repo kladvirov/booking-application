@@ -1,6 +1,7 @@
 package by.kladvirov.repository;
 
 import by.kladvirov.entity.User;
+import by.kladvirov.enums.UserStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -32,6 +33,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query("update User u set u.password = :password where u.login = :login")
     void updatePassword(@Param("login") String login, @Param("password") String password);
+
+    @Modifying
+    @Query("update User u set u.status = :status where u.id = :id")
+    void updateStatus(@Param("id") Long id, @Param("status") UserStatus status);
 
     @Modifying
     void deleteByLogin(String login);
