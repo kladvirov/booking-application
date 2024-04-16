@@ -1,20 +1,25 @@
 package by.kladvirov.security.auth;
 
+import by.kladvirov.dto.ConfirmationMessageDto;
+import by.kladvirov.dto.Message;
 import by.kladvirov.dto.PasswordChangingDto;
 import by.kladvirov.dto.TokenDto;
 import by.kladvirov.dto.UserCreationDto;
 import by.kladvirov.dto.UserDto;
 import by.kladvirov.entity.User;
 import by.kladvirov.entity.redis.Token;
+import by.kladvirov.entity.redis.Verification;
 import by.kladvirov.enums.UserStatus;
 import by.kladvirov.exception.ServiceException;
 import by.kladvirov.mapper.TokenMapper;
 import by.kladvirov.mapper.UserMapper;
+import by.kladvirov.rabbitmq.RabbitMqSender;
 import by.kladvirov.security.JwtService;
 import by.kladvirov.service.TokenService;
 import by.kladvirov.service.UserService;
+import by.kladvirov.service.VerificationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,11 +27,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
 
     private final UserService userService;
+
+    private final VerificationService verificationService;
 
     private final TokenService tokenService;
 
@@ -39,6 +50,11 @@ public class AuthenticationService {
     private final JwtService jwtService;
 
     private final AuthenticationManager manager;
+
+    private final RabbitMqSender sender;
+
+    @Value("${duration}")
+    private Long duration;
 
     @Transactional
     public TokenDto login(AuthenticationRequest request) {
@@ -61,6 +77,10 @@ public class AuthenticationService {
         UserDto user = userService.save(request);
         TokenDto tokenDto = jwtService.generateTokenDto(userMapper.toEntity(request));
         tokenService.save(tokenMapper.toEntity(tokenDto, user.getId()));
+        String token = UUID.randomUUID().toString();
+        verificationService.save(buildVerification(user, token));
+        Message message = new ConfirmationMessageDto(request.getName(), request.getSurname(), request.getEmail(), token);
+        sender.send(message);
         return tokenDto;
     }
 
@@ -77,9 +97,6 @@ public class AuthenticationService {
 
         if (jwtService.isTokenValid(refreshToken, user)) {
             TokenDto tokenDto = jwtService.generateTokenDto(user);
-            if (tokenService.findByRefreshToken(refreshToken) == null) {
-                throw new ServiceException("Invalid token", HttpStatus.FORBIDDEN);
-            }
             Token foundToken = tokenService.findByRefreshToken(refreshToken);
             tokenService.delete(foundToken);
             tokenService.save(tokenMapper.toEntity(tokenDto, user.getId()));
@@ -107,10 +124,35 @@ public class AuthenticationService {
     }
 
     @Transactional
+    public void verifyUser(String token) {
+        Verification verification = verificationService.findByToken(token);
+        updateStatus(verification.getUserId());
+        updateIsCompleted(verification);
+    }
+
+    @Transactional
     public void deleteUserByToken(String header, UserDetails userDetails) {
         String token = extractToken(header);
         validateToken(token, userDetails);
         userService.deleteByLogin(userDetails.getUsername());
+    }
+
+    @Transactional
+    public void reVerifyUser(String header, UserDetails userDetails) {
+        String hash = extractToken(header);
+        validateToken(hash, userDetails);
+        Token hashToken = tokenService.findByAccessToken(hash);
+        UserDto user = userService.findById(hashToken.getUserId());
+        Verification verificationToken = verificationService.findByUserId(user.getId());
+        if (ChronoUnit.SECONDS.between(ZonedDateTime.now(), ZonedDateTime.parse(verificationToken.getCreatedAt())) > duration) {
+            verificationService.deleteByUserId(user.getId());
+            String token = UUID.randomUUID().toString();
+            verificationService.save(buildVerification(user, token));
+            Message message = new ConfirmationMessageDto(user.getName(), user.getSurname(), user.getEmail(), token);
+            sender.send(message);
+        } else {
+            throw new ServiceException("It's too early");
+        }
     }
 
     private String extractToken(String header) {
@@ -131,6 +173,24 @@ public class AuthenticationService {
 
     private void updatePassword(String username, String newPassword) {
         userService.updatePassword(username, passwordEncoder.encode(newPassword));
+    }
+
+    private Verification buildVerification(UserDto user, String token) {
+        return Verification.builder()
+                .token(token)
+                .isCompleted(false)
+                .userId(user.getId())
+                .createdAt(ZonedDateTime.now().toString())
+                .build();
+    }
+
+    private void updateIsCompleted(Verification verification) {
+        verification.setIsCompleted(true);
+        verificationService.save(verification);
+    }
+
+    private void updateStatus(Long id) {
+        userService.updateStatus(id, UserStatus.VERIFIED);
     }
 
 }

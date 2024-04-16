@@ -4,6 +4,7 @@ import by.kladvirov.dto.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ public class EmailService {
 
     private final TemplateEngine templateEngine;
 
-    public void sendMessage(Message message) throws MessagingException {
+    public void sendMessage(Message message) {
 
         Context context = new Context();
         context.setVariable("message", message);
@@ -26,10 +27,13 @@ public class EmailService {
         String process = templateEngine.process(message.getTemplate(), context);
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
-
-        helper.setTo(message.getEmail());
-        helper.setSubject(message.getSubject());
-        helper.setText(process, true);
+        try {
+            helper.setTo(message.getEmail());
+            helper.setSubject(message.getSubject());
+            helper.setText(process, true);
+        } catch (MessagingException messagingException) {
+            messagingException.printStackTrace();
+        }
 
         mailSender.send(mimeMessage);
 

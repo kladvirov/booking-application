@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -61,6 +62,15 @@ public class AuthenticationController {
             @RequestBody PasswordChangingDto passwordChangingDto
     ) {
         authenticationService.changePassword(header, userDetails, passwordChangingDto);
+    }
+
+    @GetMapping("/verify")
+    public void verify(@RequestParam(name = "token") String token) {
+        authenticationService.verifyUser(token);
+    }
+    @GetMapping("/re-verify")
+    public void reVerify(@RequestHeader(HttpHeaders.AUTHORIZATION) String header, @AuthenticationPrincipal UserDetails userDetails) {
+        authenticationService.reVerifyUser(header, userDetails);
     }
 
     @PostMapping("/delete-by-token")
