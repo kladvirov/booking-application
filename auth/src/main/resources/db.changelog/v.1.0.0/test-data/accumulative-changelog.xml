@@ -10,5 +10,4 @@
     <include file="fill-services-table.xml" relativeToChangelogFile="true"/>
     <include file="fill-verifications-table.xml" relativeToChangelogFile="true"/>
     <include file="fill-authorities-roles-links-table.xml" relativeToChangelogFile="true"/>
-    <include file="fill-reservations-table.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
