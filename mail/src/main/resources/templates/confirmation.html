@@ -9,9 +9,8 @@
     <title>Email</title>
 </head>
 <body>
-<div>Welcome <b th:text="bichik"></b></div>
-<div> You are <b th:text="gay"></b></div>
-<div> Current message was sent from <b th:text="${message.name}"></b></div>
-<div> <b th:text="${message.surname}"></b> </div>
+<div>Добро пожаловать, <b th:text="${message.name}"></b> <b th:text="${message.surname}"></b></div>
+<div>Спасибо за регистрацию на нашем сайте.</div>
+<div>Пожалуйста, перейдите по следующей ссылке, чтобы подтвердить свой аккаунт: <a th:href="@{${message.baseUrl}(token=${message.token})}">Подтвердить аккаунт</a></div>
 </body>
 </html>
