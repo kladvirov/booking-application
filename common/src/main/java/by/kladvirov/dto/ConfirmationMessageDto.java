@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 
 @Data
 @Builder
@@ -17,9 +18,11 @@ public class ConfirmationMessageDto implements Message{
 
     private String email;
 
-    private String url;
+    private String token;
 
     private final String subject = "Confirmation request";
+
+    private final String baseUrl = "http://localhost:8080/auth/verify";
 
     @Override
     public String getTemplate() {
