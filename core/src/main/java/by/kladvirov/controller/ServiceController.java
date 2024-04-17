@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +27,7 @@ public class ServiceController {
     private final ServiceService service;
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('READ_SERVICES')")
     public ResponseEntity<ServiceDto> findById(
             @PathVariable("id") Long id
     ) {
@@ -33,11 +35,13 @@ public class ServiceController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('READ_SERVICES')")
     public ResponseEntity<List<ServiceDto>> findAll(){
         return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('SAVE_SERVICES')")
     public ResponseEntity<ServiceDto> save(
             @RequestBody
             @Valid ServiceCreationDto dto
@@ -46,6 +50,7 @@ public class ServiceController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('UPDATE_SERVICES')")
     public ResponseEntity<HttpStatus> update(
             @PathVariable("id") Long id,
             @RequestBody
@@ -56,6 +61,7 @@ public class ServiceController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('DELETE_SERVICES')")
     public ResponseEntity<HttpStatus> delete (
             @PathVariable Long id
     ) {
