@@ -1,0 +1,18 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="1" author="wladponomar@gmail.com">
+        <comment>Inserting test-data in authorities table</comment>
+        <sql>
+            INSERT INTO authorities (name)
+            VALUES
+                ('READ_SERVICE_PROVIDERS'),
+                ('CREATE_SERVICE_PROVIDERS'),
+                ('UPDATE_SERVICE_PROVIDERS'),
+                ('DELETE_SERVICE_PROVIDERS');
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
