@@ -1,3 +1,6 @@
+server:
+  port: 8081
+
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -12,8 +15,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  liquibase:
-    change-log: db.changelog/changelog.xml
+#  liquibase:
+#    change-log: db.changelog/changelog.xml
   data:
     redis:
       host: "localhost"

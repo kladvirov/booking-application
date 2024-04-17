@@ -1,4 +1,5 @@
 rootProject.name = 'booking-application'
 include 'auth'
-
 include 'core'
+include 'common'
+
