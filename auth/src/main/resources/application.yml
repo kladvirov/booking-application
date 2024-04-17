@@ -15,8 +15,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-#  liquibase:
-#    change-log: db.changelog/changelog.xml
+
   data:
     redis:
       host: "localhost"

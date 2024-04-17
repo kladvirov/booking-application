@@ -57,12 +57,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 .username(userInfoDto.getLogin())
                 .password("")
                 .authorities(
-                        userInfoDto.getAuthorities()
-                                .stream()
+                        userInfoDto.getAuthorities().stream()
                                 .map(SimpleGrantedAuthority::new)
                                 .toList()
-                )
-                .build();
+                ).build();
 
         UsernamePasswordAuthenticationToken token = UsernamePasswordAuthenticationToken.authenticated(
                 userDetails, null, userDetails.getAuthorities()

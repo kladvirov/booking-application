@@ -1,6 +1,5 @@
 package by.kladvirov.security.config;
 
-
 import by.kladvirov.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -31,4 +30,5 @@ public class SecurityConfig {
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
 }
