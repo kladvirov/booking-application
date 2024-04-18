@@ -10,6 +10,8 @@ public interface VerificationService {
 
     Verification save(Long userId);
 
+    void sendVerificationMessage(String username);
+
     void deleteByUserId(Long id);
 
 }

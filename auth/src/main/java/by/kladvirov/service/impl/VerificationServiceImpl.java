@@ -1,16 +1,23 @@
 package by.kladvirov.service.impl;
 
-import by.kladvirov.dto.UserDto;
+import by.kladvirov.dto.ConfirmationMessageDto;
+import by.kladvirov.dto.Message;
+import by.kladvirov.entity.User;
 import by.kladvirov.entity.redis.Verification;
+import by.kladvirov.enums.UserStatus;
 import by.kladvirov.exception.ServiceException;
+import by.kladvirov.rabbitmq.RabbitMqPublisher;
 import by.kladvirov.repository.redis.VerificationRepository;
+import by.kladvirov.service.UserService;
 import by.kladvirov.service.VerificationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 @Service
@@ -18,6 +25,13 @@ import java.util.UUID;
 public class VerificationServiceImpl implements VerificationService {
 
     private final VerificationRepository verificationRepository;
+
+    private final UserService userService;
+
+    private final RabbitMqPublisher publisher;
+
+    @Value("${verification.duration}")
+    private Long duration;
 
     @Transactional(readOnly = true)
     @Override
@@ -41,6 +55,21 @@ public class VerificationServiceImpl implements VerificationService {
 
     @Transactional
     @Override
+    public void sendVerificationMessage(String username) {
+        User user = userService.getByLogin(username);
+        Verification verification = findByUserId(user.getId());
+        if (user.getStatus() == UserStatus.UNVERIFIED && isVerificationDurationNotEarly(verification)) {
+            deleteByUserId(user.getId());
+            Verification newVerification = save(user.getId());
+            Message message = new ConfirmationMessageDto(user.getName(), user.getSurname(), user.getEmail(), newVerification.getToken());
+            publisher.send(message);
+        } else {
+            throw new ServiceException("There was an exception during sending message");
+        }
+    }
+
+    @Transactional
+    @Override
     public void deleteByUserId(Long id) {
         verificationRepository.deleteByUserId(id);
     }
@@ -52,6 +81,10 @@ public class VerificationServiceImpl implements VerificationService {
                 .userId(userId)
                 .createdAt(ZonedDateTime.now().toString())
                 .build();
+    }
+
+    private boolean isVerificationDurationNotEarly(Verification verificationToken) {
+        return ChronoUnit.SECONDS.between(ZonedDateTime.now(), ZonedDateTime.parse(verificationToken.getCreatedAt())) > duration;
     }
 
 }
