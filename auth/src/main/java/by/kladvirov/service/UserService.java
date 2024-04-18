@@ -13,7 +13,7 @@ public interface UserService {
 
     UserDto findById(Long id);
 
-    User findByLogin(String login);
+    User getByLogin(String login);
 
     List<UserDto> findUsersByRoleName(String roleName);
 

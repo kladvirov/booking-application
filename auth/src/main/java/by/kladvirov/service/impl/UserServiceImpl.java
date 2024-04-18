@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = true)
     @Override
-    public User findByLogin(String login) {
+    public User getByLogin(String login) {
         return userRepository.findByLogin(login)
                 .orElseThrow(() -> new ServiceException("There is no such user with following login", HttpStatus.NOT_FOUND));
     }
