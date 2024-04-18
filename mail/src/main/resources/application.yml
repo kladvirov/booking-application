@@ -5,10 +5,11 @@ spring:
     username: kladvirov@gmail.com
     password: ksme nqlr fwmf pawh
     properties:
-      "mail.smtp.ssl.enable": true
       mail:
         smtp:
           auth: true
+          ssl:
+            enable: true
   rabbitmq:
     host: localhost
     port: 5672
