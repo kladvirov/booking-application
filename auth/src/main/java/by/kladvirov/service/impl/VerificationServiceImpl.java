@@ -1,5 +1,6 @@
 package by.kladvirov.service.impl;
 
+import by.kladvirov.dto.UserDto;
 import by.kladvirov.entity.redis.Verification;
 import by.kladvirov.exception.ServiceException;
 import by.kladvirov.repository.redis.VerificationRepository;
@@ -8,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.ZonedDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -31,14 +35,23 @@ public class VerificationServiceImpl implements VerificationService {
 
     @Transactional
     @Override
-    public Verification save(Verification verification) {
-        return verificationRepository.save(verification);
+    public Verification save(Long userId) {
+        return verificationRepository.save(buildVerification(userId));
     }
 
     @Transactional
     @Override
     public void deleteByUserId(Long id) {
         verificationRepository.deleteByUserId(id);
+    }
+
+    private Verification buildVerification(Long userId) {
+        String token = UUID.randomUUID().toString();
+        return Verification.builder()
+                .token(token)
+                .userId(userId)
+                .createdAt(ZonedDateTime.now().toString())
+                .build();
     }
 
 }

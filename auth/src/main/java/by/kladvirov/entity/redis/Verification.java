@@ -26,13 +26,8 @@ public class Verification {
     @Indexed
     private String token;
 
-    @Indexed
-    private Boolean isCompleted;
-
-    @Indexed
     private Long userId;
 
-    @Indexed
     private String createdAt;
 
 }

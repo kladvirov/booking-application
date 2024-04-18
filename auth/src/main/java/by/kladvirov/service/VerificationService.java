@@ -8,7 +8,7 @@ public interface VerificationService {
 
     Verification findByUserId(Long id);
 
-    Verification save(Verification verification);
+    Verification save(Long userId);
 
     void deleteByUserId(Long id);
 
