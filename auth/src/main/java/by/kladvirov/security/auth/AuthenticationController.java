@@ -69,8 +69,8 @@ public class AuthenticationController {
         authenticationService.verifyUser(token);
     }
     @GetMapping("/send-message")
-    public void sendMessage(@RequestHeader(HttpHeaders.AUTHORIZATION) String header) {
-        authenticationService.sendMessage(header);
+    public void sendMessage(@AuthenticationPrincipal UserDetails userDetails) {
+        authenticationService.sendMessage(userDetails);
     }
 
     @PostMapping("/delete-by-token")

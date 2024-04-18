@@ -53,12 +53,9 @@ public class AuthenticationService {
 
     private final RabbitMqPublisher sender;
 
-    @Value("${verification.duration}")
-    private Long duration;
-
     @Transactional
     public TokenDto login(AuthenticationRequest request) {
-        User user = userService.findByLogin(request.getLogin());
+        User user = userService.getByLogin(request.getLogin());
         if (user.getStatus() == UserStatus.DELETED) {
             throw new RuntimeException("The user is deleted");
         }
@@ -92,7 +89,7 @@ public class AuthenticationService {
         String refreshToken = header.substring(7);
         String userLogin = jwtService.extractUserLogin(refreshToken);
 
-        User user = userService.findByLogin(userLogin);
+        User user = userService.getByLogin(userLogin);
 
         if (jwtService.isTokenValid(refreshToken, user)) {
             TokenDto tokenDto = jwtService.generateTokenDto(user);
@@ -125,7 +122,7 @@ public class AuthenticationService {
     @Transactional
     public void verifyUser(String token) {
         Verification verification = verificationService.findByToken(token);
-        updateStatus(verification.getUserId());
+        userService.updateStatus(verification.getUserId(), UserStatus.VERIFIED);
     }
 
     @Transactional
@@ -136,10 +133,8 @@ public class AuthenticationService {
     }
 
     @Transactional
-    public void sendMessage(String header) {
-        String token = extractToken(header);
-        UserDto user = getUserFromToken(token);
-        handleVerificationDuration(user);
+    public void sendMessage(UserDetails userDetails) {
+        verificationService.sendVerificationMessage(userDetails.getUsername());
     }
 
     private String extractToken(String header) {
@@ -162,36 +157,4 @@ public class AuthenticationService {
         userService.updatePassword(username, passwordEncoder.encode(newPassword));
     }
 
-    private void updateStatus(Long id) {
-        userService.updateStatus(id, UserStatus.VERIFIED);
-    }
-
-    private UserDto getUserFromToken(String token) {
-        Token entityToken = tokenService.findByAccessToken(token);
-        return userService.findById(entityToken.getUserId());
-    }
-
-    private void handleVerificationDuration(UserDto user) {
-        Verification verificationToken = verificationService.findByUserId(user.getId());
-        if (isVerificationDurationNotEarly(verificationToken)) {
-            sendVerification(user);
-        } else {
-            throw new ServiceException("It's too early");
-        }
-    }
-
-    private boolean isVerificationDurationNotEarly(Verification verificationToken) {
-        return ChronoUnit.SECONDS.between(ZonedDateTime.now(), ZonedDateTime.parse(verificationToken.getCreatedAt())) > duration;
-    }
-
-    private void sendVerification(UserDto user) {
-        verificationService.deleteByUserId(user.getId());
-        Verification newVerification = verificationService.save(user.getId());
-        Message message = createConfirmationMessage(user, newVerification);
-        sender.send(message);
-    }
-
-    private Message createConfirmationMessage(UserDto user, Verification verification) {
-        return new ConfirmationMessageDto(user.getName(), user.getSurname(), user.getEmail(), verification.getToken());
-    }
 }
