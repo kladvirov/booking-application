@@ -13,7 +13,7 @@ import by.kladvirov.enums.UserStatus;
 import by.kladvirov.exception.ServiceException;
 import by.kladvirov.mapper.TokenMapper;
 import by.kladvirov.mapper.UserMapper;
-import by.kladvirov.rabbitmq.RabbitMqSender;
+import by.kladvirov.rabbitmq.RabbitMqPublisher;
 import by.kladvirov.security.JwtService;
 import by.kladvirov.service.TokenService;
 import by.kladvirov.service.UserService;
@@ -51,9 +51,9 @@ public class AuthenticationService {
 
     private final AuthenticationManager manager;
 
-    private final RabbitMqSender sender;
+    private final RabbitMqPublisher sender;
 
-    @Value("${duration}")
+    @Value("${verification.duration}")
     private Long duration;
 
     @Transactional
@@ -77,9 +77,8 @@ public class AuthenticationService {
         UserDto user = userService.save(request);
         TokenDto tokenDto = jwtService.generateTokenDto(userMapper.toEntity(request));
         tokenService.save(tokenMapper.toEntity(tokenDto, user.getId()));
-        String token = UUID.randomUUID().toString();
-        verificationService.save(buildVerification(user, token));
-        Message message = new ConfirmationMessageDto(request.getName(), request.getSurname(), request.getEmail(), token);
+        Verification verification = verificationService.save(user.getId());
+        Message message = new ConfirmationMessageDto(request.getName(), request.getSurname(), request.getEmail(), verification.getToken());
         sender.send(message);
         return tokenDto;
     }
@@ -127,7 +126,6 @@ public class AuthenticationService {
     public void verifyUser(String token) {
         Verification verification = verificationService.findByToken(token);
         updateStatus(verification.getUserId());
-        updateIsCompleted(verification);
     }
 
     @Transactional
@@ -138,21 +136,10 @@ public class AuthenticationService {
     }
 
     @Transactional
-    public void reVerifyUser(String header, UserDetails userDetails) {
-        String hash = extractToken(header);
-        validateToken(hash, userDetails);
-        Token hashToken = tokenService.findByAccessToken(hash);
-        UserDto user = userService.findById(hashToken.getUserId());
-        Verification verificationToken = verificationService.findByUserId(user.getId());
-        if (ChronoUnit.SECONDS.between(ZonedDateTime.now(), ZonedDateTime.parse(verificationToken.getCreatedAt())) > duration) {
-            verificationService.deleteByUserId(user.getId());
-            String token = UUID.randomUUID().toString();
-            verificationService.save(buildVerification(user, token));
-            Message message = new ConfirmationMessageDto(user.getName(), user.getSurname(), user.getEmail(), token);
-            sender.send(message);
-        } else {
-            throw new ServiceException("It's too early");
-        }
+    public void sendMessage(String header) {
+        String token = extractToken(header);
+        UserDto user = getUserFromToken(token);
+        handleVerificationDuration(user);
     }
 
     private String extractToken(String header) {
@@ -175,22 +162,36 @@ public class AuthenticationService {
         userService.updatePassword(username, passwordEncoder.encode(newPassword));
     }
 
-    private Verification buildVerification(UserDto user, String token) {
-        return Verification.builder()
-                .token(token)
-                .isCompleted(false)
-                .userId(user.getId())
-                .createdAt(ZonedDateTime.now().toString())
-                .build();
-    }
-
-    private void updateIsCompleted(Verification verification) {
-        verification.setIsCompleted(true);
-        verificationService.save(verification);
-    }
-
     private void updateStatus(Long id) {
         userService.updateStatus(id, UserStatus.VERIFIED);
     }
 
+    private UserDto getUserFromToken(String token) {
+        Token entityToken = tokenService.findByAccessToken(token);
+        return userService.findById(entityToken.getUserId());
+    }
+
+    private void handleVerificationDuration(UserDto user) {
+        Verification verificationToken = verificationService.findByUserId(user.getId());
+        if (isVerificationDurationNotEarly(verificationToken)) {
+            sendVerification(user);
+        } else {
+            throw new ServiceException("It's too early");
+        }
+    }
+
+    private boolean isVerificationDurationNotEarly(Verification verificationToken) {
+        return ChronoUnit.SECONDS.between(ZonedDateTime.now(), ZonedDateTime.parse(verificationToken.getCreatedAt())) > duration;
+    }
+
+    private void sendVerification(UserDto user) {
+        verificationService.deleteByUserId(user.getId());
+        Verification newVerification = verificationService.save(user.getId());
+        Message message = createConfirmationMessage(user, newVerification);
+        sender.send(message);
+    }
+
+    private Message createConfirmationMessage(UserDto user, Verification verification) {
+        return new ConfirmationMessageDto(user.getName(), user.getSurname(), user.getEmail(), verification.getToken());
+    }
 }
