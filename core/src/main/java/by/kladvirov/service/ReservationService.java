@@ -2,6 +2,7 @@ package by.kladvirov.service;
 
 import by.kladvirov.dto.ReservationCreationDto;
 import by.kladvirov.dto.ReservationDto;
+import by.kladvirov.model.Reservation;
 
 import java.util.List;
 

@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.reactive.function.client.WebClient;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -27,7 +29,7 @@ public class ReservationController {
     private final ReservationService service;
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('READ_RESERVATIONS')")
+    @PreAuthorize("hasAuthority('READ_RESERVATIONS') and @reservationServiceImpl.findById(id).userId == authentication.principal.id")
     public ResponseEntity<ReservationDto> findById(
             @PathVariable("id") Long id
     ) {
@@ -35,13 +37,13 @@ public class ReservationController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('READ_RESERVATIONS')")
+    @PreAuthorize("hasAuthority('READ_RESERVATIONS') ")
     public ResponseEntity<List<ReservationDto>> findAll() {
         return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('SAVE_RESERVATIONS')")
+    @PreAuthorize("hasAuthority('SAVE_RESERVATIONS') and #dto.userId == authentication.principal.id")
     public ResponseEntity<ReservationDto> save(
             @RequestBody
             @Valid ReservationCreationDto dto
@@ -50,7 +52,7 @@ public class ReservationController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('UPDATE_RESERVATIONS')")
+    @PreAuthorize("hasAuthority('UPDATE_RESERVATIONS') and #dto.userId == authentication.principal.id")
     public ResponseEntity<HttpStatus> update(
             @PathVariable("id") Long id,
             @RequestBody
@@ -61,7 +63,7 @@ public class ReservationController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('DELETE_RESERVATIONS')")
+    @PreAuthorize("hasAuthority('DELETE_RESERVATIONS') and @reservationServiceImpl.findById(id).userId == authentication.principal.id")
     public ResponseEntity<HttpStatus> delete(
             @PathVariable Long id
     ) {
