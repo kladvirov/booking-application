@@ -28,4 +28,8 @@ application:
       expiration: 86400000 # a day
       refresh-token:
         expiration: 604800000 # 7 days
-duration: 60
+
+verification:
+  duration: 60
+exchange: email_exchange
+routing-key: email_key
