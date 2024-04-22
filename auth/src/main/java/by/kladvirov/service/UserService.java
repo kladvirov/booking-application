@@ -5,7 +5,6 @@ import by.kladvirov.dto.UserDto;
 import by.kladvirov.entity.User;
 import by.kladvirov.enums.UserStatus;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
