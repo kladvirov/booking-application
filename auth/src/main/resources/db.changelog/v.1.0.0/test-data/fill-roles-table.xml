@@ -7,10 +7,9 @@
         <comment>Inserting test-data in roles table</comment>
         <sql>
             INSERT INTO roles (name)
-            VALUES
-                ('ADMIN'),
-                ('USER'),
-                ('BOOKER');
+            VALUES ('ADMIN'),
+                   ('USER'),
+                   ('BOOKER');
         </sql>
     </changeSet>
 

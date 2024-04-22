@@ -6,7 +6,8 @@
     <changeSet id="2" author="wladponomar@gmail.com">
         <sql>
             ALTER TABLE verifications
-                DROP COLUMN expires_at;
+            DROP
+            COLUMN expires_at;
         </sql>
     </changeSet>
 

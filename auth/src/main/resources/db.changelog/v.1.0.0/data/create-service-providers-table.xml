@@ -5,12 +5,43 @@
 
     <changeSet id="16" author="wladponomar@gmail.com">
         <sql>
-            CREATE TABLE IF NOT EXISTS service_providers (
-                id BIGSERIAL PRIMARY KEY,
-                name TEXT NOT NULL CHECK(256 > LENGTH(name)),
-                location TEXT NOT NULL CHECK(1024 > LENGTH(location)),
-                type TEXT NOT NULL CHECK(64 > LENGTH(type)),
-                status TEXT NOT NULL CHECK(64 > LENGTH(status)),
+            CREATE TABLE IF NOT EXISTS service_providers
+            (
+                id
+                BIGSERIAL
+                PRIMARY
+                KEY,
+                name
+                TEXT
+                NOT
+                NULL
+                CHECK (
+                256 >
+                LENGTH
+            (
+                name
+            )),
+                location TEXT NOT NULL CHECK
+            (
+                1024 >
+                LENGTH
+            (
+                location
+            )),
+                type TEXT NOT NULL CHECK
+            (
+                64 >
+                LENGTH
+            (
+                type
+            )),
+                status TEXT NOT NULL CHECK
+            (
+                64 >
+                LENGTH
+            (
+                status
+            )),
                 created_at TIMESTAMPTZ NOT NULL,
                 updated_at TIMESTAMPTZ,
                 deleted_at TIMESTAMPTZ
