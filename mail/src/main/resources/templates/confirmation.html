@@ -1,6 +1,3 @@
-<!doctype html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -13,4 +10,3 @@
 <div>Спасибо за регистрацию на нашем сайте.</div>
 <div>Пожалуйста, перейдите по следующей ссылке, чтобы подтвердить свой аккаунт: <a th:href="@{${message.baseUrl}(token=${message.token})}">Подтвердить аккаунт</a></div>
 </body>
-</html>
