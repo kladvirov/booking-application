@@ -14,4 +14,6 @@ public interface VerificationService {
 
     void deleteByUserId(Long id);
 
+    void verifyUser(String token);
+
 }

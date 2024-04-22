@@ -8,6 +8,7 @@ import by.kladvirov.dto.UserInfoDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -46,36 +47,42 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh")
-    public TokenDto refresh(@RequestHeader(HttpHeaders.AUTHORIZATION) String header) {
-        return authenticationService.refreshToken(header);
+    public ResponseEntity<TokenDto> refresh(@RequestHeader(HttpHeaders.AUTHORIZATION) String header) {
+        return ResponseEntity.ok(authenticationService.refreshToken(header));
     }
 
     @PostMapping("/logout")
-    public void logout(@RequestHeader(HttpHeaders.AUTHORIZATION) String header, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<HttpStatus> logout(@RequestHeader(HttpHeaders.AUTHORIZATION) String header, @AuthenticationPrincipal UserDetails userDetails) {
         authenticationService.logout(header, userDetails);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/change-password")
-    public void changePassword(
+    public ResponseEntity<HttpStatus> changePassword(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String header,
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody PasswordChangingDto passwordChangingDto
     ) {
         authenticationService.changePassword(header, userDetails, passwordChangingDto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/verify")
-    public void verify(@RequestParam(name = "token") String token) {
+    public ResponseEntity<HttpStatus> verify(@RequestParam(name = "token") String token) {
         authenticationService.verifyUser(token);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
+
     @GetMapping("/send-message")
-    public void sendMessage(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<HttpStatus> sendMessage(@AuthenticationPrincipal UserDetails userDetails) {
         authenticationService.sendMessage(userDetails);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/delete-by-token")
-    public void deleteUserByToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String header, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<HttpStatus> deleteUserByToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String header, @AuthenticationPrincipal UserDetails userDetails) {
         authenticationService.deleteUserByToken(header, userDetails);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

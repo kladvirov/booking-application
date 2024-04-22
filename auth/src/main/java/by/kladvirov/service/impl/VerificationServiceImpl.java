@@ -74,6 +74,13 @@ public class VerificationServiceImpl implements VerificationService {
         verificationRepository.deleteByUserId(id);
     }
 
+    @Transactional
+    @Override
+    public void verifyUser(String token) {
+        Verification verification = findByToken(token);
+        userService.updateStatus(verification.getUserId(), UserStatus.VERIFIED);
+    }
+
     private Verification buildVerification(Long userId) {
         String token = UUID.randomUUID().toString();
         return Verification.builder()

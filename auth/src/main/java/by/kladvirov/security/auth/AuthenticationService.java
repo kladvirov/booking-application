@@ -19,17 +19,12 @@ import by.kladvirov.service.TokenService;
 import by.kladvirov.service.UserService;
 import by.kladvirov.service.VerificationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -121,8 +116,7 @@ public class AuthenticationService {
 
     @Transactional
     public void verifyUser(String token) {
-        Verification verification = verificationService.findByToken(token);
-        userService.updateStatus(verification.getUserId(), UserStatus.VERIFIED);
+        verificationService.verifyUser(token);
     }
 
     @Transactional
