@@ -1,5 +1,6 @@
-package by.kladvirov.security.auth;
+package by.kladvirov.service;
 
+import by.kladvirov.dto.AuthenticationRequest;
 import by.kladvirov.dto.ConfirmationMessageDto;
 import by.kladvirov.dto.Message;
 import by.kladvirov.dto.PasswordChangingDto;
@@ -10,14 +11,12 @@ import by.kladvirov.entity.User;
 import by.kladvirov.entity.redis.Token;
 import by.kladvirov.entity.redis.Verification;
 import by.kladvirov.enums.UserStatus;
+import by.kladvirov.exception.PasswordException;
 import by.kladvirov.exception.ServiceException;
+import by.kladvirov.exception.TokenException;
 import by.kladvirov.mapper.TokenMapper;
 import by.kladvirov.mapper.UserMapper;
 import by.kladvirov.rabbitmq.RabbitMqPublisher;
-import by.kladvirov.security.JwtService;
-import by.kladvirov.service.TokenService;
-import by.kladvirov.service.UserService;
-import by.kladvirov.service.VerificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -52,7 +51,7 @@ public class AuthenticationService {
     public TokenDto login(AuthenticationRequest request) {
         User user = userService.getByLogin(request.getLogin());
         if (user.getStatus() == UserStatus.DELETED) {
-            throw new RuntimeException("The user is deleted");
+            throw new ServiceException("The user is deleted");
         }
         TokenDto tokenDto = jwtService.generateTokenDto(user);
         tokenService.save(tokenMapper.toEntity(tokenDto, user.getId()));
@@ -78,12 +77,11 @@ public class AuthenticationService {
     @Transactional
     public TokenDto refreshToken(String header) {
         if (header == null || !header.startsWith("Bearer ")) {
-            throw new RuntimeException("Invalid format");
+            throw new TokenException("Invalid format");
         }
 
         String refreshToken = header.substring(7);
         String userLogin = jwtService.extractUserLogin(refreshToken);
-
         User user = userService.getByLogin(userLogin);
 
         if (jwtService.isTokenValid(refreshToken, user)) {
@@ -92,9 +90,9 @@ public class AuthenticationService {
             tokenService.delete(foundToken);
             tokenService.save(tokenMapper.toEntity(tokenDto, user.getId()));
             return tokenDto;
+        } else {
+            throw new TokenException("Token is invalid");
         }
-
-        throw new RuntimeException();
     }
 
     @Transactional
@@ -107,11 +105,11 @@ public class AuthenticationService {
     }
 
     @Transactional
-    public void changePassword(String header, UserDetails userDetails, PasswordChangingDto passwordChangingDto) {
-        String token = extractToken(header);
-        validateToken(token, userDetails);
-        validateCurrentPassword(passwordChangingDto.getCurrentPassword(), userDetails.getPassword());
-        updatePassword(userDetails.getUsername(), passwordChangingDto.getConfirmationPassword());
+    public void changePassword(UserDetails userDetails, PasswordChangingDto passwordChangingDto) {
+        if (!passwordEncoder.matches(passwordChangingDto.getCurrentPassword(), userDetails.getPassword())) {
+            throw new PasswordException("Current passwords don't match");
+        }
+        userService.updatePassword(userDetails.getUsername(), passwordEncoder.encode(passwordChangingDto.getConfirmationPassword()));
     }
 
     @Transactional
@@ -120,35 +118,13 @@ public class AuthenticationService {
     }
 
     @Transactional
-    public void deleteUserByToken(String header, UserDetails userDetails) {
-        String token = extractToken(header);
-        validateToken(token, userDetails);
+    public void deleteUserByToken(UserDetails userDetails) {
         userService.deleteByLogin(userDetails.getUsername());
     }
 
     @Transactional
-    public void sendMessage(UserDetails userDetails) {
+    public void sendVerificationMessage(UserDetails userDetails) {
         verificationService.sendVerificationMessage(userDetails.getUsername());
-    }
-
-    private String extractToken(String header) {
-        return header.substring(7);
-    }
-
-    private void validateToken(String token, UserDetails userDetails) {
-        if (!jwtService.isTokenValid(token, userDetails)) {
-            throw new RuntimeException("Token is invalid");
-        }
-    }
-
-    private void validateCurrentPassword(String currentPassword, String storedPassword) {
-        if (!passwordEncoder.matches(currentPassword, storedPassword)) {
-            throw new RuntimeException("Current passwords don't match");
-        }
-    }
-
-    private void updatePassword(String username, String newPassword) {
-        userService.updatePassword(username, passwordEncoder.encode(newPassword));
     }
 
 }
