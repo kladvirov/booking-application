@@ -1,10 +1,12 @@
-package by.kladvirov.security.auth;
+package by.kladvirov.controller;
 
 
 import by.kladvirov.dto.PasswordChangingDto;
 import by.kladvirov.dto.TokenDto;
 import by.kladvirov.dto.UserCreationDto;
 import by.kladvirov.dto.UserInfoDto;
+import by.kladvirov.dto.AuthenticationRequest;
+import by.kladvirov.service.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -59,11 +61,10 @@ public class AuthenticationController {
 
     @PostMapping("/change-password")
     public ResponseEntity<HttpStatus> changePassword(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String header,
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody PasswordChangingDto passwordChangingDto
     ) {
-        authenticationService.changePassword(header, userDetails, passwordChangingDto);
+        authenticationService.changePassword(userDetails, passwordChangingDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -73,15 +74,15 @@ public class AuthenticationController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/send-message")
-    public ResponseEntity<HttpStatus> sendMessage(@AuthenticationPrincipal UserDetails userDetails) {
-        authenticationService.sendMessage(userDetails);
+    @GetMapping("/send-verification-message")
+    public ResponseEntity<HttpStatus> sendVerificationMessage(@AuthenticationPrincipal UserDetails userDetails) {
+        authenticationService.sendVerificationMessage(userDetails);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/delete-by-token")
-    public ResponseEntity<HttpStatus> deleteUserByToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String header, @AuthenticationPrincipal UserDetails userDetails) {
-        authenticationService.deleteUserByToken(header, userDetails);
+    @PostMapping("/self-delete")
+    public ResponseEntity<HttpStatus> deleteUserByToken(@AuthenticationPrincipal UserDetails userDetails) {
+        authenticationService.deleteUserByToken(userDetails);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
