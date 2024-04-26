@@ -1,4 +1,4 @@
-package by.kladvirov.security.configuration;
+package by.kladvirov.config;
 
 import by.kladvirov.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

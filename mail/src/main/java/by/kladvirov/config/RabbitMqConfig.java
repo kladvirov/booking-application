@@ -1,4 +1,4 @@
-package by.kladvirov.rabbitmq;
+package by.kladvirov.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.Binding;

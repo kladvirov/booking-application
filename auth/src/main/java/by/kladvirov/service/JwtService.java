@@ -1,4 +1,4 @@
-package by.kladvirov.security;
+package by.kladvirov.service;
 
 import by.kladvirov.dto.TokenDto;
 import io.jsonwebtoken.Claims;

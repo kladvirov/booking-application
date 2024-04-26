@@ -1,4 +1,4 @@
-package by.kladvirov.security.auth;
+package by.kladvirov.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
