@@ -1,6 +1,7 @@
 package by.kladvirov.service;
 
 import by.kladvirov.dto.Message;
+import by.kladvirov.exception.EmailException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,7 @@ public class EmailService {
             helper.setSubject(message.getSubject());
             helper.setText(process, true);
         } catch (MessagingException | MailException exception) {
-           exception.printStackTrace();
+           throw new EmailException("There was an exception during sending message");
         }
 
         mailSender.send(mimeMessage);
