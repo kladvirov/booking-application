@@ -18,6 +18,7 @@ import by.kladvirov.mapper.TokenMapper;
 import by.kladvirov.mapper.UserMapper;
 import by.kladvirov.rabbitmq.RabbitMqPublisher;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -51,7 +52,7 @@ public class AuthenticationService {
     public TokenDto login(AuthenticationRequest request) {
         User user = userService.getByLogin(request.getLogin());
         if (user.getStatus() == UserStatus.DELETED) {
-            throw new ServiceException("The user is deleted");
+            throw new ServiceException("The user is deleted", HttpStatus.NO_CONTENT);
         }
         TokenDto tokenDto = jwtService.generateTokenDto(user);
         tokenService.save(tokenMapper.toEntity(tokenDto, user.getId()));
@@ -62,7 +63,7 @@ public class AuthenticationService {
     @Transactional
     public TokenDto register(UserCreationDto request) {
         if (userService.existsByEmail(request.getEmail())) {
-            throw new ServiceException("The following email is already taken");
+            throw new ServiceException("The following email is already taken", HttpStatus.BAD_REQUEST);
         }
         request.setPassword(passwordEncoder.encode(request.getPassword()));
         UserDto user = userService.save(request);
@@ -77,7 +78,7 @@ public class AuthenticationService {
     @Transactional
     public TokenDto refreshToken(String header) {
         if (header == null || !header.startsWith("Bearer ")) {
-            throw new TokenException("Invalid format");
+            throw new TokenException("Invalid format", HttpStatus.BAD_REQUEST);
         }
 
         String refreshToken = header.substring(7);
@@ -91,7 +92,7 @@ public class AuthenticationService {
             tokenService.save(tokenMapper.toEntity(tokenDto, user.getId()));
             return tokenDto;
         } else {
-            throw new TokenException("Token is invalid");
+            throw new TokenException("Token is invalid", HttpStatus.FORBIDDEN);
         }
     }
 
@@ -107,7 +108,7 @@ public class AuthenticationService {
     @Transactional
     public void changePassword(UserDetails userDetails, PasswordChangingDto passwordChangingDto) {
         if (!passwordEncoder.matches(passwordChangingDto.getCurrentPassword(), userDetails.getPassword())) {
-            throw new PasswordException("Current passwords don't match");
+            throw new PasswordException("Current passwords don't match", HttpStatus.BAD_REQUEST);
         }
         userService.updatePassword(userDetails.getUsername(), passwordEncoder.encode(passwordChangingDto.getConfirmationPassword()));
     }

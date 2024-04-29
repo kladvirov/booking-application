@@ -64,7 +64,7 @@ public class VerificationServiceImpl implements VerificationService {
             Message message = new ConfirmationMessageDto(user.getName(), user.getSurname(), user.getEmail(), newVerification.getToken());
             publisher.send(message);
         } else {
-            throw new ServiceException("There was an exception during sending message");
+            throw new ServiceException("There was an exception during sending message", HttpStatus.BAD_REQUEST);
         }
     }
 
