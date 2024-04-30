@@ -1,0 +1,20 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="1" author="wladponomar@gmail.com">
+        <comment>Inserting editing field in reservations table</comment>
+        <sql>
+            ALTER TABLE reservations ADD COLUMN username VARCHAR(64);
+
+            UPDATE reservations
+            SET username = users.login
+                FROM users
+            WHERE reservations.user_id = users.id;
+
+            ALTER TABLE reservations DROP COLUMN user_id;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
