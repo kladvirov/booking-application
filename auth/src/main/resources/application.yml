@@ -12,8 +12,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  liquibase:
-    change-log: db.changelog/changelog.xml
   data:
     redis:
       host: "localhost"
@@ -28,3 +26,8 @@ application:
       expiration: 86400000 # a day
       refresh-token:
         expiration: 604800000 # 7 days
+
+verification:
+  duration: 60
+exchange: email_exchange
+routing-key: email_key

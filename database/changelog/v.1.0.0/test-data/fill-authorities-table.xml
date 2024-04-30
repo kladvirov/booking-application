@@ -1,0 +1,33 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="5" author="wladponomar@gmail.com">
+        <comment>Inserting test-data in authorities table</comment>
+        <sql>
+            INSERT INTO authorities (name)
+            VALUES ('READ_RESERVATIONS'),
+                   ('CREATE_RESERVATIONS'),
+                   ('UPDATE_RESERVATIONS'),
+                   ('DELETE_RESERVATIONS'),
+                   ('READ_SERVICES'),
+                   ('CREATE_SERVICES'),
+                   ('UPDATE_SERVICES'),
+                   ('DELETE_SERVICES'),
+                   ('READ_PAYMENTS'),
+                   ('CREATE_PAYMENTS'),
+                   ('UPDATE_PAYMENTS'),
+                   ('DELETE_PAYMENTS'),
+                   ('READ_REVIEWS'),
+                   ('CREATE_REVIEWS'),
+                   ('UPDATE_REVIEWS'),
+                   ('DELETE_REVIEWS'),
+                   ('READ_PROVIDERS'),
+                   ('CREATE_PROVIDERS'),
+                   ('UPDATE_PROVIDERS'),
+                   ('DELETE_PROVIDERS');
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
