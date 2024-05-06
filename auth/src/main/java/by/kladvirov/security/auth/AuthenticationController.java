@@ -5,6 +5,7 @@ import by.kladvirov.dto.PasswordChangingDto;
 import by.kladvirov.dto.TokenDto;
 import by.kladvirov.dto.UserCreationDto;
 import by.kladvirov.dto.UserInfoDto;
+import by.kladvirov.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -26,11 +27,14 @@ public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
+    private final UserService service;
+
     @GetMapping("/get-info")
     public ResponseEntity<UserInfoDto> fetchUser(@AuthenticationPrincipal UserDetails userDetails) {
         UserInfoDto userInfoDto = new UserInfoDto(userDetails.getUsername(), userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .toList());
+                .toList(),
+                service.findUserRoles(userDetails.getUsername()));
         return ResponseEntity.ok(userInfoDto);
     }
 
