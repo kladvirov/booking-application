@@ -2,19 +2,21 @@ package by.kladvirov.service.impl;
 
 import by.kladvirov.dto.ReservationCreationDto;
 import by.kladvirov.dto.ReservationDto;
-import by.kladvirov.enums.Status;
+import by.kladvirov.dto.UserInfoDto;
 import by.kladvirov.exception.ServiceException;
 import by.kladvirov.mapper.ReservationMapper;
 import by.kladvirov.model.Reservation;
 import by.kladvirov.repository.ReservationRepository;
 import by.kladvirov.service.ReservationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
@@ -23,6 +25,8 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationRepository repository;
 
     private final ReservationMapper mapper;
+
+    private final WebClient client;
 
     @Transactional(readOnly = true)
     @Override
@@ -35,6 +39,12 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public List<ReservationDto> findAll() {
         return mapper.toDto(repository.findAll());
+    }
+
+    @Transactional
+    @Override
+    public List<ReservationDto> findAllByUsername(String username) {
+        return mapper.toDto(repository.findAllByUsername(username));
     }
 
     @Transactional
@@ -73,7 +83,7 @@ public class ReservationServiceImpl implements ReservationService {
         target.setStatus(source.getStatus());
         target.setExpiresAt(source.getExpiresAt());
         target.setOrderedAt(source.getOrderedAt());
-        target.setUserId(source.getUserId());
+        target.setUsername(source.getUsername());
     }
 
     private boolean hasReservation(ReservationCreationDto dto) {
@@ -86,6 +96,43 @@ public class ReservationServiceImpl implements ReservationService {
                                         dto.getDateFrom().isBefore(reservation.getDateFrom()) &&
                                                 dto.getDateTo().isAfter(reservation.getDateTo())
                 );
+    }
+
+    @Override
+    public boolean isAllowedToRead(String username, Long id){
+        return repository.findById(id).orElseThrow(() -> new ServiceException("Cannot find user with id " + id, HttpStatus.NOT_FOUND))
+                .getUsername().equals(username);
+    }
+
+    @Override
+    public boolean isAllowedToCreate(String firstUsername, String secondUsername) {
+        return Objects.equals(firstUsername, secondUsername);
+    }
+
+    @Override
+    public boolean isAllowedToUpdate(String firstUsername, String secondUsername) {
+        return Objects.equals(firstUsername, secondUsername);
+    }
+
+    @Override
+    public boolean isAllowedToDelete(String username, Long id) {
+        return repository.findById(id).orElseThrow(() -> new ServiceException("Cannot find user with id " + id, HttpStatus.NOT_FOUND))
+                .getUsername().equals(username);
+    }
+
+    @Override
+    public boolean isAdmin(String header){
+        if(!header.startsWith("Bearer ")) throw new ServiceException("Header isn't bearer", HttpStatus.BAD_REQUEST);
+        UserInfoDto userInfoDto = client.get()
+                .uri("http://localhost:8081/auth/get-info")
+                .header(HttpHeaders.AUTHORIZATION, header)
+                .retrieve()
+                .bodyToMono(UserInfoDto.class)
+                .onErrorComplete()
+                .block();
+        if(userInfoDto == null) throw new ServiceException("Cannot get user info in method isAllowedToRead. It is null", HttpStatus.BAD_REQUEST);
+        return userInfoDto.getRoles().stream()
+                .anyMatch("ADMIN"::equals);
     }
 
 }
