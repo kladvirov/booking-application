@@ -17,4 +17,6 @@ public class UserInfoDto {
 
     private List<String> authorities;
 
+    private List<String> roles;
+
 }
