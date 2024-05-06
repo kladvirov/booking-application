@@ -17,3 +17,10 @@ spring:
         format_sql: true
   liquibase:
     change-log: db.changelog/changelog.xml
+
+  data:
+    redis:
+      host: "localhost"
+      port: 6379
+  main:
+    allow-bean-definition-overriding: true
