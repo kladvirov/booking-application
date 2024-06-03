@@ -1,0 +1,23 @@
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 465
+    username: kladvirov@gmail.com
+    password: ksme nqlr fwmf pawh
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+server:
+  port: 8081
+
+queue: email_queue
+exchange: email_exchange
+routing-key: email_key

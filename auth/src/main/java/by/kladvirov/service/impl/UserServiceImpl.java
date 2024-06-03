@@ -4,6 +4,7 @@ import by.kladvirov.dto.UserCreationDto;
 import by.kladvirov.dto.UserDto;
 import by.kladvirov.entity.Role;
 import by.kladvirov.entity.User;
+import by.kladvirov.enums.UserStatus;
 import by.kladvirov.exception.ServiceException;
 import by.kladvirov.mapper.UserMapper;
 import by.kladvirov.repository.UserRepository;
@@ -37,7 +38,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = true)
     @Override
-    public User findByLogin(String login) {
+    public User getByLogin(String login) {
         return userRepository.findByLogin(login)
                 .orElseThrow(() -> new ServiceException("There is no such user with following login", HttpStatus.NOT_FOUND));
     }
@@ -115,6 +116,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updatePassword(String login, String password) {
         userRepository.updatePassword(login, password);
+    }
+
+    @Transactional
+    @Override
+    public void updateStatus(Long id, UserStatus status) {
+        userRepository.updateStatus(id, status);
     }
 
     private void updateUser(User user, User mappedUser) {

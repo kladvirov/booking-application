@@ -41,12 +41,14 @@ public class UserController {
     }
 
     @GetMapping("/find-by-role")
+    @PreAuthorize("hasAuthority('READ_USERS_BY_ROLE')")
     public ResponseEntity<List<UserDto>> findUsersByRoleName(@RequestParam(value = "roleName") String roleName) {
         List<UserDto> users = userService.findUsersByRoleName(roleName);
         return ResponseEntity.ok(users);
     }
 
     @GetMapping("/find-roles")
+    @PreAuthorize("hasAuthority('READ_USER_ROLES')")
     public ResponseEntity<List<String>> findUserRoles(@RequestParam(value = "login") String login) {
         List<String> userRoles = userService.findUserRoles(login);
         return ResponseEntity.ok(userRoles);

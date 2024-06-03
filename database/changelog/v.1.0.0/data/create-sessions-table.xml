@@ -1,0 +1,54 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="7" author="wladponomar@gmail.com">
+        <sql>
+            CREATE TABLE IF NOT EXISTS sessions
+            (
+                id
+                BIGSERIAL
+                PRIMARY
+                KEY,
+                ip
+                CIDR
+                NOT
+                NULL,
+                user_agent
+                TEXT
+                NOT
+                NULL
+                CHECK (
+                512 >
+                LENGTH
+            (
+                user_agent
+            )),
+                operation_system TEXT NOT NULL CHECK
+            (
+                512 >
+                LENGTH
+            (
+                operation_system
+            )),
+                status TEXT NOT NULL CHECK
+            (
+                64 >
+                LENGTH
+            (
+                status
+            )),
+                last_activity TIMESTAMPTZ,
+                created_at TIMESTAMPTZ NOT NULL,
+                updated_at TIMESTAMPTZ,
+                deleted_at TIMESTAMPTZ,
+                user_id BIGINT NOT NULL REFERENCES users
+            (
+                id
+            )
+                );
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

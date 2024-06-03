@@ -1,0 +1,12 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Email</title>
+</head>
+<body>
+<div>Добро пожаловать, <b th:text="${message.name}"></b> <b th:text="${message.surname}"></b></div>
+<div>Спасибо за регистрацию на нашем сайте.</div>
+<div>Пожалуйста, перейдите по следующей ссылке, чтобы подтвердить свой аккаунт: <a th:href="@{${message.baseUrl}(token=${message.token})}">Подтвердить аккаунт</a></div>
+</body>
