@@ -29,16 +29,17 @@ public class ReservationController {
     private final ReservationService service;
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('READ_RESERVATIONS') && @reservationServiceImpl.isAllowedToRead(@principal.username, #id) || @reservationServiceImpl.isAdmin(@httpServletRequest.getHeader('Authorization'))")
+    @PreAuthorize("hasAuthority('READ_RESERVATIONS') && @reservationServiceImpl.isAllowedToRead(principal.username, #id) || @reservationServiceImpl.isAdmin(#httpServletRequest.getHeader('Authorization'))")
     public ResponseEntity<ReservationDto> findById(
-            @PathVariable("id") Long id
+            @PathVariable("id") Long id,
+            HttpServletRequest httpServletRequest
     ) {
         return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
     }
 
     @GetMapping("/all")
-    @PreAuthorize("hasAuthority('READ_RESERVATIONS') && @reservationServiceImpl.isAdmin(@httpServletRequest.getHeader('Authorization'))")
-    public ResponseEntity<List<ReservationDto>> findAll(){
+    @PreAuthorize("hasAuthority('READ_RESERVATIONS') && @reservationServiceImpl.isAdmin(#httpServletRequest.getHeader('Authorization'))")
+    public ResponseEntity<List<ReservationDto>> findAll(HttpServletRequest httpServletRequest){
         return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
     }
 
@@ -49,29 +50,32 @@ public class ReservationController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('SAVE_RESERVATIONS') && @reservationServiceImpl.isAllowedToCreate(@principal.username, #dto.username) || @reservationServiceImpl.isAdmin(@httpServletRequest.getHeader('Authorization'))")
+    @PreAuthorize("hasAuthority('SAVE_RESERVATIONS') && @reservationServiceImpl.isAllowedToCreate(principal.username, #dto.username) || @reservationServiceImpl.isAdmin(#httpServletRequest.getHeader('Authorization'))")
     public ResponseEntity<ReservationDto> save(
             @RequestBody
-            @Valid ReservationCreationDto dto
+            @Valid ReservationCreationDto dto,
+            HttpServletRequest httpServletRequest
     ) {
         return new ResponseEntity<>(service.save(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('UPDATE_RESERVATIONS') && @reservationServiceImpl.isAllowedToUpdate(#dto.username, @principal.username) || @reservationServiceImpl.isAdmin(@httpServletRequest.getHeader('Authorization'))")
+    @PreAuthorize("hasAuthority('UPDATE_RESERVATIONS') && @reservationServiceImpl.isAllowedToUpdate(#dto.username, principal.username) || @reservationServiceImpl.isAdmin(#httpServletRequest.getHeader('Authorization'))")
     public ResponseEntity<HttpStatus> update(
             @PathVariable("id") Long id,
             @RequestBody
-            @Valid ReservationCreationDto dto
+            @Valid ReservationCreationDto dto,
+            HttpServletRequest httpServletRequest
     ) {
         service.update(id, dto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('DELETE_RESERVATIONS') && @reservationServiceImpl.isAllowedToDelete(@principal.username, #id) || @reservationServiceImpl.isAdmin(@httpServletRequest.getHeader('Authorization'))")
+    @PreAuthorize("hasAuthority('DELETE_RESERVATIONS') && @reservationServiceImpl.isAllowedToDelete(principal.username, #id) || @reservationServiceImpl.isAdmin(#httpServletRequest.getHeader('Authorization'))")
     public ResponseEntity<HttpStatus> delete(
-            @PathVariable Long id
+            @PathVariable Long id,
+            HttpServletRequest httpServletRequest
     ) {
         service.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
