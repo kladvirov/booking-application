@@ -1,0 +1,17 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="1" author="andrejsuslov308@gmail.com">
+        <comment>Inserting links in users_roles_links table</comment>
+        <sql>
+            INSERT INTO users_roles_links(user_id, role_id)
+            VALUES
+                (1, 1), (5, 2),
+                (4, 1), (2, 2),
+                (3, 2);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
