@@ -5,7 +5,7 @@
 
     <changeSet id="3" author="wladponomar@gmail.com">
         <sql>
-            CREATE TABLE authorities_roles_links
+            CREATE TABLE IF NOT EXISTS authorities_roles_links
             (
                 authority_id BIGINT NOT NULL REFERENCES authorities (id),
                 role_id      BIGINT NOT NULL REFERENCES roles (id)

@@ -31,8 +31,8 @@ public class ReservationDto {
     @NotNull(message = "Expiration date cannot be null, but can be empty")
     private ZonedDateTime expiresAt;
 
-    @NotNull(message = "User id cannot be empty")
-    private Long userId;
+    @NotNull(message = "Username cannot be empty")
+    private String username;
 
     @NotNull(message = "Service id cannot be empty")
     private Long serviceId;
