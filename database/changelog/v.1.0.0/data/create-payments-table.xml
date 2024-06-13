@@ -7,33 +7,12 @@
         <sql>
             CREATE TABLE IF NOT EXISTS payments
             (
-                id
-                BIGSERIAL
-                PRIMARY
-                KEY,
-                info
-                JSONB,
-                created_at
-                TIMESTAMPTZ
-                NOT
-                NULL,
-                expires_at
-                TIMESTAMPTZ
-                NOT
-                NULL,
-                reservation_id
-                BIGINT
-                NOT
-                NULL
-                REFERENCES
-                reservations
-            (
-                id
-            ),
-                user_id BIGINT NOT NULL REFERENCES users
-            (
-                id
-            )
+                id BIGSERIAL PRIMARY KEY,
+                info JSONB,
+                created_at TIMESTAMPTZ NOT NULL,
+                expires_at TIMESTAMPTZ NOT NULL,
+                reservation_id BIGINT NOT NULL REFERENCES reservations(id),
+                user_id BIGINT NOT NULL REFERENCES users(id)
                 );
         </sql>
     </changeSet>
