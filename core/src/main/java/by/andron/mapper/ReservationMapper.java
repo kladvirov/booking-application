@@ -1,17 +1,15 @@
-package by.kladvirov.mapper;
+package by.andron.mapper;
 
-import by.kladvirov.dto.ReservationCreationDto;
-import by.kladvirov.dto.ReservationDto;
-import by.kladvirov.model.Reservation;
-import by.kladvirov.model.Service;
+import by.andron.dto.ReservationCreationDto;
+import by.kladvirov.dto.core.ReservationDto;
+import by.andron.model.Reservation;
+import by.andron.model.Service;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "SPRING", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ReservationMapper {
