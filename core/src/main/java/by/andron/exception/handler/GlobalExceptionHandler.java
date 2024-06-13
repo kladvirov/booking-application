@@ -1,6 +1,6 @@
-package by.kladvirov.exception.handler;
+package by.andron.exception.handler;
 
-import by.kladvirov.exception.ServiceException;
+import by.andron.exception.ServiceException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ValidationException;
 import org.springframework.http.HttpStatus;
