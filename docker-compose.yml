@@ -38,4 +38,9 @@ services:
     volumes:
       - ./database/changelog/:/liquibase/changelog/
     command:
-      update --username=postgres --password=postgres --changeLogFile=/changelog/changelog.xml --url=jdbc:postgresql://postgres:5432/postgres
+      update 
+      --username=postgres
+      --password=postgres 
+      --changeLogFile=/changelog/changelog.xml 
+      --url=jdbc:postgresql://postgres:5432/postgres
+      --driver=org.postgresql.Driver
