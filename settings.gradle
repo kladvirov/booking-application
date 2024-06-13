@@ -4,4 +4,5 @@ include 'auth'
 include 'core'
 include 'mail'
 include 'common'
+include 'payment'
 
