@@ -1,4 +1,4 @@
-package by.kladvirov.exception.handler;
+package by.andron.exception.handler;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
