@@ -45,6 +45,15 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = true)
     @Override
+    public UserDto findByLogin(String login) {
+         User user = userRepository.findByLogin(login)
+                 .orElseThrow(() -> new ServiceException("There is no such user", HttpStatus.NOT_FOUND));
+         return userMapper.toDto(user);
+    }
+
+
+    @Transactional(readOnly = true)
+    @Override
     public List<UserDto> findUsersByRoleName(String roleName) {
         return userMapper.toDto(userRepository.findUsersByRoleName(roleName));
     }

@@ -14,6 +14,8 @@ public interface UserService {
 
     User getByLogin(String login);
 
+    UserDto findByLogin(String login);
+
     List<UserDto> findUsersByRoleName(String roleName);
 
     List<String> findUserRoles(String login);

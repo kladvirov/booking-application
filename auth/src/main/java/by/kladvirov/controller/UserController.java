@@ -34,6 +34,12 @@ public class UserController {
         return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
     }
 
+    @GetMapping("/get-user")
+    @PreAuthorize("hasAuthority('READ_USERS')")
+    public ResponseEntity<UserDto> getByLogin(@RequestParam("login") String login) {
+        return new ResponseEntity<>(userService.findByLogin(login), HttpStatus.OK);
+    }
+
     @GetMapping
     @PreAuthorize("hasAuthority('READ_USERS')")
     public ResponseEntity<List<UserDto>> getAllUsers(Pageable pageable) {
@@ -42,14 +48,14 @@ public class UserController {
 
     @GetMapping("/find-by-role")
     @PreAuthorize("hasAuthority('READ_USERS_BY_ROLE')")
-    public ResponseEntity<List<UserDto>> findUsersByRoleName(@RequestParam(value = "roleName") String roleName) {
+    public ResponseEntity<List<UserDto>> findUsersByRoleName(@RequestParam("roleName") String roleName) {
         List<UserDto> users = userService.findUsersByRoleName(roleName);
         return ResponseEntity.ok(users);
     }
 
     @GetMapping("/find-roles")
     @PreAuthorize("hasAuthority('READ_USER_ROLES')")
-    public ResponseEntity<List<String>> findUserRoles(@RequestParam(value = "login") String login) {
+    public ResponseEntity<List<String>> findUserRoles(@RequestParam("login") String login) {
         List<String> userRoles = userService.findUserRoles(login);
         return ResponseEntity.ok(userRoles);
     }
