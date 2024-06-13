@@ -1,7 +1,7 @@
-package by.kladvirov.service;
+package by.andron.service;
 
-import by.kladvirov.dto.ServiceProviderCreationDto;
-import by.kladvirov.dto.ServiceProviderDto;
+import by.andron.dto.ServiceProviderCreationDto;
+import by.kladvirov.dto.core.ServiceProviderDto;
 
 import java.util.List;
 

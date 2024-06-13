@@ -1,6 +1,6 @@
-package by.kladvirov.repository;
+package by.andron.repository;
 
-import by.kladvirov.model.ServiceProvider;
+import by.andron.model.ServiceProvider;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ServiceProviderRepository extends JpaRepository<ServiceProvider, Long> {

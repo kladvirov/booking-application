@@ -1,8 +1,8 @@
-package by.kladvirov.controller;
+package by.andron.controller;
 
-import by.kladvirov.dto.ServiceProviderCreationDto;
-import by.kladvirov.dto.ServiceProviderDto;
-import by.kladvirov.service.ServiceProviderService;
+import by.andron.dto.ServiceProviderCreationDto;
+import by.andron.service.ServiceProviderService;
+import by.kladvirov.dto.core.ServiceProviderDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,9 +26,7 @@ public class ServiceProviderController {
     private final ServiceProviderService service;
 
     @GetMapping("/{id}")
-    public ResponseEntity<ServiceProviderDto> findById(
-            @PathVariable("id") Long id
-    ) throws Exception {
+    public ResponseEntity<ServiceProviderDto> findById(@PathVariable("id") Long id) {
         return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
     }
 
@@ -56,9 +54,7 @@ public class ServiceProviderController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> delete(
-            @PathVariable Long id
-    ) {
+    public ResponseEntity<HttpStatus> delete(@PathVariable Long id) {
         service.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
