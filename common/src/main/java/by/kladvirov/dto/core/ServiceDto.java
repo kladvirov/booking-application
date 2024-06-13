@@ -1,4 +1,4 @@
-package by.kladvirov.dto;
+package by.kladvirov.dto.core;
 
 import by.kladvirov.enums.Status;
 import jakarta.validation.constraints.NotEmpty;

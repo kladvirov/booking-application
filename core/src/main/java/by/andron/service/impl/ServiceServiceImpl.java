@@ -1,19 +1,17 @@
-package by.kladvirov.service.impl;
+package by.andron.service.impl;
 
-import by.kladvirov.dto.ServiceCreationDto;
-import by.kladvirov.dto.ServiceDto;
-import by.kladvirov.enums.Status;
-import by.kladvirov.exception.ServiceException;
-import by.kladvirov.mapper.ServiceMapper;
-import by.kladvirov.repository.ServiceRepository;
-import by.kladvirov.service.ServiceService;
+import by.andron.dto.ServiceCreationDto;
+import by.kladvirov.dto.core.ServiceDto;
+import by.andron.exception.ServiceException;
+import by.andron.mapper.ServiceMapper;
+import by.andron.repository.ServiceRepository;
+import by.andron.service.ServiceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -39,16 +37,16 @@ public class ServiceServiceImpl implements ServiceService {
     @Transactional
     @Override
     public ServiceDto save(ServiceCreationDto dto) {
-        by.kladvirov.model.Service entity = mapper.toEntity(dto);
+        by.andron.model.Service entity = mapper.toEntity(dto);
         return mapper.toDto(repository.save(entity));
     }
 
     @Transactional
     @Override
     public void update(Long id, ServiceCreationDto dto) {
-        by.kladvirov.model.Service service = repository.findById(id)
+        by.andron.model.Service service = repository.findById(id)
                 .orElseThrow(() -> new ServiceException("Cannot update service in service", HttpStatus.BAD_REQUEST));
-        by.kladvirov.model.Service mappedService = mapper.toEntity(dto);
+        by.andron.model.Service mappedService = mapper.toEntity(dto);
         updateService(service, mappedService);
         repository.save(service);
     }
@@ -59,7 +57,7 @@ public class ServiceServiceImpl implements ServiceService {
         repository.deleteById(id);
     }
 
-    private void updateService(by.kladvirov.model.Service target, by.kladvirov.model.Service source) {
+    private void updateService(by.andron.model.Service target, by.andron.model.Service source) {
         target.setServiceProvider(source.getServiceProvider());
         target.setUpdatedAt(source.getUpdatedAt());
         target.setStatus(source.getStatus());

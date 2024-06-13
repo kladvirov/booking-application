@@ -1,8 +1,8 @@
-package by.kladvirov.controller;
+package by.andron.controller;
 
-import by.kladvirov.dto.ServiceCreationDto;
-import by.kladvirov.dto.ServiceDto;
-import by.kladvirov.service.ServiceService;
+import by.andron.dto.ServiceCreationDto;
+import by.andron.service.ServiceService;
+import by.kladvirov.dto.core.ServiceDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,14 +26,12 @@ public class ServiceController {
     private final ServiceService service;
 
     @GetMapping("/{id}")
-    public ResponseEntity<ServiceDto> findById(
-            @PathVariable("id") Long id
-    ) {
+    public ResponseEntity<ServiceDto> findById(@PathVariable("id") Long id) {
         return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<List<ServiceDto>> findAll(){
+    public ResponseEntity<List<ServiceDto>> findAll() {
         return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
     }
 
@@ -56,10 +54,9 @@ public class ServiceController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> delete (
-            @PathVariable Long id
-    ) {
+    public ResponseEntity<HttpStatus> delete(@PathVariable Long id) {
         service.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 }
