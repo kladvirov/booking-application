@@ -1,5 +1,6 @@
 package by.kladvirov.service.impl;
 
+import by.kladvirov.dto.EmailDto;
 import by.kladvirov.dto.UserCreationDto;
 import by.kladvirov.dto.UserDto;
 import by.kladvirov.entity.Role;
@@ -63,6 +64,12 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = true)
     @Override
+    public User findByEmail(EmailDto email) {
+        return userRepository.findUserByEmail(email.getEmail())
+                .orElseThrow(() -> new ServiceException("Cannot find user with email " + email, HttpStatus.NOT_FOUND));
+    }
+
+    @Override
     public Boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
@@ -116,6 +123,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updatePassword(String login, String password) {
         userRepository.updatePassword(login, password);
+    }
+
+    @Transactional
+    @Override
+    public void updatePasswordByEmail(String email, String password) {
+        userRepository.updatePasswordByEmail(email, password);
     }
 
     @Transactional

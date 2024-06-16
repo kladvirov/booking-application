@@ -1,5 +1,6 @@
 package by.kladvirov.repository;
 
+import by.kladvirov.dto.EmailDto;
 import by.kladvirov.entity.User;
 import by.kladvirov.enums.UserStatus;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("from User u left join fetch u.roles")
     List<User> findAllUsers(Pageable pageable);
 
+    Optional<User> findUserByEmail(String email);
+
     Boolean existsByEmail(String email);
 
     @Query("from User u left join u.roles r where r.name = :roleName")
@@ -33,6 +36,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query("update User u set u.password = :password where u.login = :login")
     void updatePassword(@Param("login") String login, @Param("password") String password);
+
+    @Modifying
+    @Query("update User u set u.password = :password where u.email = :email")
+    void updatePasswordByEmail(@Param("email") String email, @Param("password") String password);
 
     @Modifying
     @Query("update User u set u.status = :status where u.id = :id")
