@@ -1,7 +1,10 @@
 package by.kladvirov.service;
 
 import by.kladvirov.dto.AuthenticationRequest;
+import by.kladvirov.dto.ChangePasswordMessageDto;
 import by.kladvirov.dto.ConfirmationMessageDto;
+import by.kladvirov.dto.EmailDto;
+import by.kladvirov.dto.ForgotPasswordMessageDto;
 import by.kladvirov.dto.Message;
 import by.kladvirov.dto.PasswordChangingDto;
 import by.kladvirov.dto.TokenDto;
@@ -46,7 +49,7 @@ public class AuthenticationService {
 
     private final AuthenticationManager manager;
 
-    private final RabbitMqPublisher sender;
+    private final RabbitMqPublisher publisher;
 
     @Transactional
     public TokenDto login(AuthenticationRequest request) {
@@ -71,7 +74,7 @@ public class AuthenticationService {
         tokenService.save(tokenMapper.toEntity(tokenDto, user.getId()));
         Verification verification = verificationService.save(user.getId());
         Message message = new ConfirmationMessageDto(request.getName(), request.getSurname(), request.getEmail(), verification.getToken());
-        sender.send(message);
+        publisher.send(message);
         return tokenDto;
     }
 
@@ -111,6 +114,12 @@ public class AuthenticationService {
             throw new PasswordException("Current passwords don't match", HttpStatus.BAD_REQUEST);
         }
         userService.updatePassword(userDetails.getUsername(), passwordEncoder.encode(passwordChangingDto.getConfirmationPassword()));
+        sendPasswordChangingMessage(userDetails.getUsername());
+    }
+
+    @Transactional
+    public void restorePassword(String email, PasswordChangingDto passwordChangingDto) {
+        userService.updatePassword(email, passwordEncoder.encode(passwordChangingDto.getConfirmationPassword()));
     }
 
     @Transactional
@@ -128,4 +137,25 @@ public class AuthenticationService {
         verificationService.sendVerificationMessage(userDetails.getUsername());
     }
 
+    @Transactional
+    public void sendPasswordChangingMessage(String username) {
+        User user = userService.getByLogin(username);
+        if (user != null) {
+            Message message = new ChangePasswordMessageDto(user.getName(), user.getSurname(), user.getEmail(), "Пароль был успешно сменен на новый");
+            publisher.send(message);
+        } else {
+            throw new ServiceException("There was an exception during sending message", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Transactional
+    public void sendForgotPasswordMessage(EmailDto email) {
+        User user = userService.findByEmail(email);
+        if(user != null) {
+            Message message = new ForgotPasswordMessageDto(user.getName(), user.getSurname(), user.getEmail());
+            publisher.send(message);
+        } else {
+            throw new ServiceException("There was an exception during sending message in auth service", HttpStatus.BAD_REQUEST);
+        }
+    }
 }
