@@ -6,6 +6,7 @@ import by.andron.mapper.ReservationMapper;
 import by.andron.model.Reservation;
 import by.andron.repository.ReservationRepository;
 import by.andron.service.ReservationService;
+import by.kladvirov.dto.UserInfoDto;
 import by.kladvirov.dto.core.ReservationDto;
 import by.kladvirov.dto.payment.PaymentDto;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
@@ -48,6 +50,13 @@ public class ReservationServiceImpl implements ReservationService {
         return mapper.toDto(repository.findAll());
     }
 
+    @Transactional
+    @Override
+    public List<ReservationDto> findAllByUsername(String username) {
+        return mapper.toDto(repository.findAllByUsername(username));
+    }
+
+    @Transactional
     @Override
     public ReservationDto save(ReservationCreationDto dto, String header) {
         if (hasReservation(dto)) {
@@ -98,6 +107,43 @@ public class ReservationServiceImpl implements ReservationService {
                                         dto.getDateFrom().isBefore(reservation.getDateFrom()) &&
                                                 dto.getDateTo().isAfter(reservation.getDateTo())
                 );
+    }
+
+    @Override
+    public boolean isAllowedToRead(String username, Long id){
+        return repository.findById(id).orElseThrow(() -> new ServiceException("Cannot find user with id " + id, HttpStatus.NOT_FOUND))
+                .getUsername().equals(username);
+    }
+
+    @Override
+    public boolean isAllowedToCreate(String firstUsername, String secondUsername) {
+        return Objects.equals(firstUsername, secondUsername);
+    }
+
+    @Override
+    public boolean isAllowedToUpdate(String firstUsername, String secondUsername) {
+        return Objects.equals(firstUsername, secondUsername);
+    }
+
+    @Override
+    public boolean isAllowedToDelete(String username, Long id) {
+        return repository.findById(id).orElseThrow(() -> new ServiceException("Cannot find user with id " + id, HttpStatus.NOT_FOUND))
+                .getUsername().equals(username);
+    }
+
+    @Override
+    public boolean isAdmin(String header){
+        if(!header.startsWith("Bearer ")) throw new ServiceException("Header isn't bearer", HttpStatus.BAD_REQUEST);
+        UserInfoDto userInfoDto = webClient.get()
+                .uri("http://localhost:8080/auth/get-info")
+                .header(HttpHeaders.AUTHORIZATION, header)
+                .retrieve()
+                .bodyToMono(UserInfoDto.class)
+                .onErrorComplete()
+                .block();
+        if(userInfoDto == null) throw new ServiceException("Cannot get user info in method isAllowedToRead. It is null", HttpStatus.BAD_REQUEST);
+        return userInfoDto.getRoles().stream()
+                .anyMatch("ADMIN"::equals);
     }
 
     private void createPayment(String header, Reservation savedEntity) {

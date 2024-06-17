@@ -1,4 +1,4 @@
-package by.kladvirov.exception.handler;
+package by.kladvirov.message;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

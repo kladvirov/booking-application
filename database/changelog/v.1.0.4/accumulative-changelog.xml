@@ -5,4 +5,5 @@
 
     <include file="fill-authorities-table.xml" relativeToChangelogFile="true"/>
     <include file="fill-authorities-roles-links-table.xml" relativeToChangelogFile="true"/>
+    <include file="fill-users-roles-links-table.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

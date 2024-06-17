@@ -68,11 +68,11 @@
                 );
 
             ALTER TABLE users
-                ADD COLUMN search tsvector
+                ADD COLUMN IF NOT EXISTS search tsvector
                     GENERATED ALWAYS AS (to_tsvector('russian', replace(
                             users.first_name || ' ' || users.last_name || ' ' || users.login,
                             'ё', 'е'))) STORED;
-            CREATE INDEX users_search_index ON users USING GIN (search);
+            CREATE INDEX IF NOT EXISTS users_search_index ON users USING GIN (search);
         </sql>
     </changeSet>
 
