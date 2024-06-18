@@ -12,7 +12,7 @@ public interface PaymentService {
 
     List<PaymentDto> findAll(Pageable pageable);
 
-    Mono<PaymentDto> save(String header, Long reservationId);
+    PaymentDto save(String header, Long reservationId);
 
     void delete(Long id);
 

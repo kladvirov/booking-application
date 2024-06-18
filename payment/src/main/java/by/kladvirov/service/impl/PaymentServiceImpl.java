@@ -14,6 +14,7 @@ import by.kladvirov.mapper.PaymentMapper;
 import by.kladvirov.repository.PaymentRepository;
 import by.kladvirov.service.PaymentService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,10 +28,12 @@ import reactor.core.scheduler.Schedulers;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
 
@@ -56,31 +59,19 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Transactional
     @Override
-    public Mono<PaymentDto> save(String header, Long reservationId) {
+    public PaymentDto save(String header, Long reservationId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String login = authentication.getName();
 
-        Mono<UserDto> userDtoMono = getUserDto(header, login);
-        Mono<ReservationDto> reservationDtoMono = userDtoMono.flatMap(userDto -> getReservationDto(header, userDto, reservationId));
-        Mono<ServiceDto> serviceDtoMono = reservationDtoMono.flatMap(reservationDto -> getServiceDto(header, reservationDto));
-        Mono<ServiceProviderDto> serviceProviderDtoMono = serviceDtoMono.flatMap(serviceDto -> getServiceProviderDto(header, serviceDto));
+        UserDto userDto = getUserDto(header, login);
+        ReservationDto reservationDto = getReservationDto(header, login, reservationId);
 
-        return Mono.zip(userDtoMono, reservationDtoMono, serviceDtoMono, serviceProviderDtoMono)
-                .flatMap(tuple -> {
-                    UserDto userDto = tuple.getT1();
-                    ReservationDto reservationDto = tuple.getT2();
-                    ServiceDto serviceDto = tuple.getT3();
-                    ServiceProviderDto serviceProviderDto = tuple.getT4();
+        ServiceDto serviceDto = getServiceDto(header, reservationDto);
+        ServiceProviderDto serviceProviderDto = getServiceProviderDto(header, serviceDto);
 
-                    Provider provider = buildProvider(serviceProviderDto);
-                    by.kladvirov.dto.payment.json.Service service = buildService(provider, serviceDto);
-                    Info info = buildInfo(service, reservationDto);
-                    Payment payment = buildPayment(info, userDto, reservationDto);
+        Payment payment = buildPayment(buildInfo(buildService(buildProvider(serviceProviderDto), serviceDto), reservationDto), userDto, reservationDto);
 
-                    return Mono.fromCallable(() -> paymentRepository.save(payment))
-                            .subscribeOn(Schedulers.boundedElastic())
-                            .map(paymentMapper::toDto);
-                });
+        return paymentMapper.toDto(paymentRepository.save(payment));
     }
 
     @Transactional
@@ -95,36 +86,30 @@ public class PaymentServiceImpl implements PaymentService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String login = authentication.getName();
 
-        Mono<UserDto> userDtoMono = getUserDto(header, login);
-        Mono<ReservationDto> reservationDtoMono = userDtoMono.flatMap(userDto -> getReservationDto(header, userDto, reservationId));
-        Mono<ServiceDto> serviceDtoMono = reservationDtoMono.flatMap(reservationDto -> getServiceDto(header, reservationDto));
+        UserDto userDto = getUserDto(header, login);
+        ReservationDto reservationDto = getReservationDto(header, login, reservationId);
 
         PaymentDto paymentDto = findById(id);
         Payment payment = paymentMapper.toEntity(paymentDto);
 
-        Mono.zip(userDtoMono, reservationDtoMono, serviceDtoMono)
-                .flatMap(tuple -> {
-                    UserDto userDto = tuple.getT1();
-                    ReservationDto reservationDto = tuple.getT2();
-                    ServiceDto serviceDto = tuple.getT3();
+        ServiceDto serviceDto = getServiceDto(header, reservationDto);
 
-                    if (payment.getExpiresAt().isBefore(ZonedDateTime.now())) {
-                        return Mono.error(new ServiceException("Payment has expired"));
-                    }
+        if (payment.getExpiresAt().isBefore(ZonedDateTime.now())) {
+            throw new ServiceException("Payment has expired");
+        }
 
-                    if (!hasBalanceToPay(reservationDto, serviceDto, userDto)) {
-                        return Mono.error(new ServiceException("You haven't enough money to pay"));
-                    }
+        BigDecimal totalCost = calculateTotalCost(reservationDto, serviceDto);
+        if (userDto.getBalance().compareTo(totalCost) < 0) {
+            throw new ServiceException("You don't have enough money to pay");
+        }
 
-                    payment.setStatus(PaymentStatus.PAID);
-                    return Mono.fromCallable(() -> paymentRepository.save(payment))
-                            .subscribeOn(Schedulers.boundedElastic());
-                })
-                .subscribe();
+        // заапдейтить баланс юзера
+        payment.setStatus(PaymentStatus.PAID);
+        paymentRepository.save(payment);
     }
 
 
-    private Mono<UserDto> getUserDto(String header, String login) {
+    private UserDto getUserDto(String header, String login) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .scheme("http")
@@ -136,26 +121,28 @@ public class PaymentServiceImpl implements PaymentService {
                 .header(HttpHeaders.AUTHORIZATION, header)
                 .retrieve()
                 .bodyToMono(UserDto.class)
-                .onErrorResume(e -> Mono.error(new Exception("Error during getting user's dto", e)));
+                .onErrorResume(e -> Mono.error(new Exception("Error during getting user's dto", e)))
+                .block();
     }
 
-    private Mono<ReservationDto> getReservationDto(String header, UserDto userDto, Long reservationId) {
+    private ReservationDto getReservationDto(String header, String login, Long reservationId) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .scheme("http")
                         .host("localhost")
                         .port(8083)
                         .path("/reservations/find-by-login-and-id")
-                        .queryParam("login", userDto.getLogin())
+                        .queryParam("login", login)
                         .queryParam("id", reservationId)
                         .build())
                 .header(HttpHeaders.AUTHORIZATION, header)
                 .retrieve()
                 .bodyToMono(ReservationDto.class)
-                .onErrorResume(e -> Mono.error(new Exception("Error during getting reservation dto", e)));
+                .onErrorResume(e -> Mono.error(new Exception("Error during getting reservation dto", e)))
+                .block();
     }
 
-    private Mono<ServiceDto> getServiceDto(String header, ReservationDto reservationDto) {
+    private ServiceDto getServiceDto(String header, ReservationDto reservationDto) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .scheme("http")
@@ -166,10 +153,11 @@ public class PaymentServiceImpl implements PaymentService {
                 .header(HttpHeaders.AUTHORIZATION, header)
                 .retrieve()
                 .bodyToMono(ServiceDto.class)
-                .onErrorResume(e -> Mono.error(new Exception("Error during getting service dto", e)));
+                .onErrorResume(e -> Mono.error(new Exception("Error during getting service dto", e)))
+                .block();
     }
 
-    private Mono<ServiceProviderDto> getServiceProviderDto(String header, ServiceDto serviceDto) {
+    private ServiceProviderDto getServiceProviderDto(String header, ServiceDto serviceDto) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .scheme("http")
@@ -180,7 +168,8 @@ public class PaymentServiceImpl implements PaymentService {
                 .header(HttpHeaders.AUTHORIZATION, header)
                 .retrieve()
                 .bodyToMono(ServiceProviderDto.class)
-                .onErrorResume(e -> Mono.error(new Exception("Error during getting service provider dto", e)));
+                .onErrorResume(e -> Mono.error(new Exception("Error during getting service provider dto", e)))
+                .block();
     }
 
     private Info buildInfo(by.kladvirov.dto.payment.json.Service service, ReservationDto reservationDto) {
@@ -212,12 +201,10 @@ public class PaymentServiceImpl implements PaymentService {
                 .build();
     }
 
-    private Boolean hasBalanceToPay(ReservationDto reservationDto, ServiceDto serviceDto, UserDto userDto) {
+    private BigDecimal calculateTotalCost(ReservationDto reservationDto, ServiceDto serviceDto) {
         long hoursBooked = Duration.between(reservationDto.getDateFrom(), reservationDto.getDateTo()).toHours();
         BigDecimal pricePerHour = BigDecimal.valueOf(serviceDto.getPricePerHour());
-        BigDecimal totalCost = pricePerHour.multiply(BigDecimal.valueOf(hoursBooked));
-        BigDecimal userBalance = userDto.getBalance();
-        return userBalance.compareTo(totalCost) >= 0;
+        return pricePerHour.multiply(BigDecimal.valueOf(hoursBooked));
     }
 
 }

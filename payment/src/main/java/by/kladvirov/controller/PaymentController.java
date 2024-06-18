@@ -37,11 +37,11 @@ public class PaymentController {
     }
 
     @PostMapping
-    public Mono<ResponseEntity<PaymentDto>> createPayment(
+    public ResponseEntity<PaymentDto> createPayment(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String header,
             @RequestParam("reservationId") Long id
     ) {
-        return paymentService.save(header, id).map(ResponseEntity::ok);
+        return new ResponseEntity<>(paymentService.save(header, id), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
@@ -51,7 +51,7 @@ public class PaymentController {
     }
 
     @PostMapping("/pay")
-    public ResponseEntity<HttpStatus> refresh(
+    public ResponseEntity<HttpStatus> pay(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String header,
             @RequestParam("id") Long id,
             @RequestParam("reservationId") Long reservationId
