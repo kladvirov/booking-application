@@ -1,4 +1,4 @@
-package by.andron.model;
+package by.kladvirov.model;
 
 import by.kladvirov.enums.Status;
 import jakarta.persistence.Column;
