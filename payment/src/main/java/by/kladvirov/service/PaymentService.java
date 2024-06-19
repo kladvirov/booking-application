@@ -2,7 +2,6 @@ package by.kladvirov.service;
 
 import by.kladvirov.dto.payment.PaymentDto;
 import org.springframework.data.domain.Pageable;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -17,5 +16,7 @@ public interface PaymentService {
     void delete(Long id);
 
     void pay(Long id, Long reservationId, String header);
+
+    void cancel(Long id);
 
 }

@@ -14,7 +14,6 @@ import by.kladvirov.mapper.PaymentMapper;
 import by.kladvirov.repository.PaymentRepository;
 import by.kladvirov.service.PaymentService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,16 +23,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 import java.math.BigDecimal;
 import java.time.Duration;
-import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
 
@@ -103,8 +99,22 @@ public class PaymentServiceImpl implements PaymentService {
             throw new ServiceException("You don't have enough money to pay");
         }
 
-        // заапдейтить баланс юзера
+        updateBalance(header, userDto.getBalance().subtract(totalCost));
         payment.setStatus(PaymentStatus.PAID);
+        paymentRepository.save(payment);
+    }
+
+    @Transactional
+    @Override
+    public void cancel(Long id) {
+        PaymentDto paymentDto = findById(id);
+        Payment payment = paymentMapper.toEntity(paymentDto);
+
+        if (payment.getExpiresAt().isBefore(ZonedDateTime.now())) {
+            throw new ServiceException("Payment has expired");
+        }
+
+        payment.setStatus(PaymentStatus.CANCELED);
         paymentRepository.save(payment);
     }
 
@@ -169,6 +179,22 @@ public class PaymentServiceImpl implements PaymentService {
                 .retrieve()
                 .bodyToMono(ServiceProviderDto.class)
                 .onErrorResume(e -> Mono.error(new Exception("Error during getting service provider dto", e)))
+                .block();
+    }
+
+    private void updateBalance(String header, BigDecimal balance) {
+        webClient.put()
+                .uri(uriBuilder -> uriBuilder
+                        .scheme("http")
+                        .host("localhost")
+                        .port(8080)
+                        .path("/users")
+                        .queryParam("balance", balance)
+                        .build())
+                .header(HttpHeaders.AUTHORIZATION, header)
+                .retrieve()
+                .bodyToMono(UserDto.class)
+                .onErrorResume(e -> Mono.error(new Exception("Error during updating user balance", e)))
                 .block();
     }
 

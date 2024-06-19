@@ -57,7 +57,13 @@ public class PaymentController {
             @RequestParam("reservationId") Long reservationId
     ) {
         paymentService.pay(id, reservationId, header);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/cancel")
+    public ResponseEntity<HttpStatus> cancel(@RequestParam("id") Long id) {
+        paymentService.cancel(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
