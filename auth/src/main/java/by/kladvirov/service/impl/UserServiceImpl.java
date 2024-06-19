@@ -4,11 +4,13 @@ import by.kladvirov.dto.UserCreationDto;
 import by.kladvirov.dto.UserDto;
 import by.kladvirov.entity.Role;
 import by.kladvirov.entity.User;
+import by.kladvirov.entity.redis.Token;
 import by.kladvirov.enums.UserStatus;
 import by.kladvirov.exception.ServiceException;
 import by.kladvirov.mapper.UserMapper;
 import by.kladvirov.repository.UserRepository;
 import by.kladvirov.service.RoleService;
+import by.kladvirov.service.TokenService;
 import by.kladvirov.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -27,6 +30,8 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     private final RoleService roleService;
+
+    private final TokenService tokenService;
 
     @Transactional(readOnly = true)
     @Override
@@ -90,6 +95,13 @@ public class UserServiceImpl implements UserService {
         User mappedUser = userMapper.toEntity(userDto);
         updateUser(user, mappedUser);
         userRepository.save(user);
+    }
+
+    @Override
+    public void updateBalance(String header, BigDecimal balance) {
+        String token = header.substring(7);
+        Token entity = tokenService.findByAccessToken(token);
+        userRepository.updateBalance(entity.getUserId(), balance);
     }
 
     @Transactional

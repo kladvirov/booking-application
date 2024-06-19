@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +34,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query("update User u set u.password = :password where u.login = :login")
     void updatePassword(@Param("login") String login, @Param("password") String password);
+
+    @Modifying
+    @Query("update User u set u.balance = :balance where u.id = :id")
+    void updateBalance(@Param("id") Long id, @Param("balance") BigDecimal balance);
 
     @Modifying
     @Query("update User u set u.status = :status where u.id = :id")

@@ -6,6 +6,7 @@ import by.kladvirov.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,10 +16,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -70,6 +73,16 @@ public class UserController {
     @PreAuthorize("hasAuthority('UPDATE_USERS')")
     public ResponseEntity<HttpStatus> update(@PathVariable("id") Long id, @RequestBody @Valid UserCreationDto userCreationDto) {
         userService.update(id, userCreationDto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping
+    @PreAuthorize("hasAuthority('UPDATE_USERS')") // только тут другая осорити будет
+    public ResponseEntity<HttpStatus> updateBalance(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String header,
+            @RequestParam("balance") BigDecimal balance
+    ) {
+        userService.updateBalance(header, balance);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
