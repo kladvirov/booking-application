@@ -56,7 +56,7 @@ public class Payment {
     private void setFields(){
         this.createdAt = ZonedDateTime.now();
         this.expiresAt = createdAt.plusHours(1);
-        this.status = PaymentStatus.UNPAID;
+        this.status = PaymentStatus.WAITING;
     }
 
 }
