@@ -4,7 +4,6 @@ import by.kladvirov.dto.UserCreationDto;
 import by.kladvirov.dto.UserDto;
 import by.kladvirov.entity.Role;
 import by.kladvirov.entity.User;
-import by.kladvirov.entity.redis.Token;
 import by.kladvirov.enums.UserStatus;
 import by.kladvirov.exception.ServiceException;
 import by.kladvirov.mapper.UserMapper;
@@ -15,6 +14,7 @@ import by.kladvirov.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,9 +51,9 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @Override
     public UserDto findByLogin(String login) {
-         User user = userRepository.findByLogin(login)
-                 .orElseThrow(() -> new ServiceException("There is no such user", HttpStatus.NOT_FOUND));
-         return userMapper.toDto(user);
+        User user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new ServiceException("There is no such user", HttpStatus.NOT_FOUND));
+        return userMapper.toDto(user);
     }
 
 
@@ -97,11 +97,15 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Transactional
     @Override
     public void updateBalance(String header, BigDecimal balance) {
-        String token = header.substring(7);
-        Token entity = tokenService.findByAccessToken(token);
-        userRepository.updateBalance(entity.getUserId(), balance);
+        String login = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (login != null) {
+            userRepository.updateBalance(login, balance);
+        } else {
+            throw new ServiceException("There is no authorized user with the following login");
+        }
     }
 
     @Transactional

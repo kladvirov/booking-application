@@ -36,8 +36,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     void updatePassword(@Param("login") String login, @Param("password") String password);
 
     @Modifying
-    @Query("update User u set u.balance = :balance where u.id = :id")
-    void updateBalance(@Param("id") Long id, @Param("balance") BigDecimal balance);
+    @Query("update User u set u.balance = :balance where u.login = :login")
+    void updateBalance(@Param("login") String login, @Param("balance") BigDecimal balance);
 
     @Modifying
     @Query("update User u set u.status = :status where u.id = :id")
