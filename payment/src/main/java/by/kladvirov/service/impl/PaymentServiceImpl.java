@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,16 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentMapper paymentMapper;
 
     private final PaymentRepository paymentRepository;
+
+    @Scheduled(cron = "0 * * * * *")
+    public void checkAndMarkOverduePayments() {
+        List<PaymentDto> payments = paymentRepository.findByExpiresAtBeforeAndStatusIs(ZonedDateTime.now(), PaymentStatus.WAITING);
+
+        payments.stream()
+                .peek(payment -> payment.setStatus(PaymentStatus.OVERDUE))
+                .toList()
+                .forEach(paymentDto -> paymentRepository.save(paymentMapper.toEntity(paymentDto)));
+    }
 
     @Transactional(readOnly = true)
     @Override
@@ -90,8 +101,8 @@ public class PaymentServiceImpl implements PaymentService {
 
         ServiceDto serviceDto = getServiceDto(header, reservationDto);
 
-        if (payment.getExpiresAt().isBefore(ZonedDateTime.now())) {
-            throw new ServiceException("Payment has expired");
+        if (!(payment.getStatus() == PaymentStatus.WAITING)) {
+            throw new ServiceException("You can't pay current reservation");
         }
 
         BigDecimal totalCost = calculateTotalCost(reservationDto, serviceDto);
@@ -106,12 +117,12 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Transactional
     @Override
-    public void cancel(Long id) {
+    public void cancel(String header, Long id) {
         PaymentDto paymentDto = findById(id);
         Payment payment = paymentMapper.toEntity(paymentDto);
 
-        if (payment.getExpiresAt().isBefore(ZonedDateTime.now())) {
-            throw new ServiceException("Payment has expired");
+        if (!(payment.getStatus() == PaymentStatus.WAITING)) {
+            throw new ServiceException("You can't cancel current reservation");
         }
 
         payment.setStatus(PaymentStatus.CANCELED);
@@ -201,7 +212,7 @@ public class PaymentServiceImpl implements PaymentService {
     private Info buildInfo(by.kladvirov.dto.payment.json.Service service, ReservationDto reservationDto) {
         return Info.builder()
                 .service(service)
-                .hours(reservationDto.getDateTo().getHour() - reservationDto.getDateFrom().getHour())
+                .hours(Duration.between(reservationDto.getDateFrom(), reservationDto.getDateTo()).toHours())
                 .build();
     }
 
