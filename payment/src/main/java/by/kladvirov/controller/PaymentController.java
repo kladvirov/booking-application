@@ -61,8 +61,8 @@ public class PaymentController {
     }
 
     @PostMapping("/cancel")
-    public ResponseEntity<HttpStatus> cancel(@RequestParam("id") Long id) {
-        paymentService.cancel(id);
+    public ResponseEntity<HttpStatus> cancel(@RequestHeader(HttpHeaders.AUTHORIZATION) String header, @RequestParam("id") Long id) {
+        paymentService.cancel(header, id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
