@@ -9,7 +9,7 @@ import lombok.Data;
 @Builder
 public class Info {
 
-    private Integer hours;
+    private Long hours;
 
     private Service service;
 
