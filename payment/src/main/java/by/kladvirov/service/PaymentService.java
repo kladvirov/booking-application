@@ -17,6 +17,6 @@ public interface PaymentService {
 
     void pay(Long id, Long reservationId, String header);
 
-    void cancel(Long id);
+    void cancel(String header, Long id);
 
 }
