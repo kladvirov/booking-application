@@ -39,7 +39,7 @@ public class ReservationController {
 
     @GetMapping("/all")
     @PreAuthorize("hasAuthority('READ_RESERVATIONS') && @reservationServiceImpl.isAdmin(#httpServletRequest.getHeader('Authorization'))")
-    public ResponseEntity<List<ReservationDto>> findAll(HttpServletRequest httpServletRequest){
+    public ResponseEntity<List<ReservationDto>> findAll(HttpServletRequest httpServletRequest) {
         return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
     }
 

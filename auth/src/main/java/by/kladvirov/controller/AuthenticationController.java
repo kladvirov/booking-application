@@ -1,11 +1,11 @@
 package by.kladvirov.controller;
 
+import by.kladvirov.dto.AuthenticationRequest;
 import by.kladvirov.dto.EmailDto;
 import by.kladvirov.dto.PasswordChangingDto;
 import by.kladvirov.dto.TokenDto;
 import by.kladvirov.dto.UserCreationDto;
 import by.kladvirov.dto.UserInfoDto;
-import by.kladvirov.dto.AuthenticationRequest;
 import by.kladvirov.service.AuthenticationService;
 import by.kladvirov.service.impl.UserServiceImpl;
 import jakarta.validation.Valid;

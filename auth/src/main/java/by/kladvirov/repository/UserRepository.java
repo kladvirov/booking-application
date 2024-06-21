@@ -1,6 +1,5 @@
 package by.kladvirov.repository;
 
-import by.kladvirov.dto.EmailDto;
 import by.kladvirov.entity.User;
 import by.kladvirov.enums.UserStatus;
 import org.springframework.data.domain.Pageable;

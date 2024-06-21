@@ -36,7 +36,7 @@ public class ServiceController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('READ_SERVICES')")
-    public ResponseEntity<List<ServiceDto>> findAll(){
+    public ResponseEntity<List<ServiceDto>> findAll() {
         return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
     }
 
@@ -62,10 +62,11 @@ public class ServiceController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('DELETE_SERVICES')")
-    public ResponseEntity<HttpStatus> delete (
+    public ResponseEntity<HttpStatus> delete(
             @PathVariable Long id
     ) {
         service.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 }

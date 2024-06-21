@@ -11,7 +11,7 @@ public interface ReservationService {
 
     List<ReservationDto> findAll();
 
-    List<ReservationDto>findAllByUsername(String username);
+    List<ReservationDto> findAllByUsername(String username);
 
     ReservationDto save(ReservationCreationDto dto);
 

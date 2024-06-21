@@ -151,7 +151,7 @@ public class AuthenticationService {
     @Transactional
     public void sendForgotPasswordMessage(EmailDto email) {
         User user = userService.findByEmail(email);
-        if(user != null) {
+        if (user != null) {
             Message message = new ForgotPasswordMessageDto(user.getName(), user.getSurname(), user.getEmail());
             publisher.send(message);
         } else {

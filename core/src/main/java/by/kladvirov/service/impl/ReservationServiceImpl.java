@@ -30,7 +30,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Transactional(readOnly = true)
     @Override
-    public ReservationDto findById(Long id){
+    public ReservationDto findById(Long id) {
         return mapper.toDto(repository.findById(id)
                 .orElseThrow(() -> new ServiceException("Cannot find reservation by id", HttpStatus.BAD_REQUEST)));
     }
@@ -93,13 +93,13 @@ public class ReservationServiceImpl implements ReservationService {
                         dto.getDateFrom().isBefore(reservation.getDateTo()) ||
                         dto.getDateTo().isAfter(reservation.getDateFrom()) &&
                                 dto.getDateFrom().isBefore(reservation.getDateTo()) ||
-                                        dto.getDateFrom().isBefore(reservation.getDateFrom()) &&
-                                                dto.getDateTo().isAfter(reservation.getDateTo())
+                        dto.getDateFrom().isBefore(reservation.getDateFrom()) &&
+                                dto.getDateTo().isAfter(reservation.getDateTo())
                 );
     }
 
     @Override
-    public boolean isAllowedToRead(String username, Long id){
+    public boolean isAllowedToRead(String username, Long id) {
         return repository.findById(id).orElseThrow(() -> new ServiceException("Cannot find user with id " + id, HttpStatus.NOT_FOUND))
                 .getUsername().equals(username);
     }
@@ -121,8 +121,8 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public boolean isAdmin(String header){
-        if(!header.startsWith("Bearer ")) throw new ServiceException("Header isn't bearer", HttpStatus.BAD_REQUEST);
+    public boolean isAdmin(String header) {
+        if (!header.startsWith("Bearer ")) throw new ServiceException("Header isn't bearer", HttpStatus.BAD_REQUEST);
         UserInfoDto userInfoDto = client.get()
                 .uri("http://localhost:8080/auth/get-info")
                 .header(HttpHeaders.AUTHORIZATION, header)
@@ -130,7 +130,8 @@ public class ReservationServiceImpl implements ReservationService {
                 .bodyToMono(UserInfoDto.class)
                 .onErrorComplete()
                 .block();
-        if(userInfoDto == null) throw new ServiceException("Cannot get user info in method isAllowedToRead. It is null", HttpStatus.BAD_REQUEST);
+        if (userInfoDto == null)
+            throw new ServiceException("Cannot get user info in method isAllowedToRead. It is null", HttpStatus.BAD_REQUEST);
         return userInfoDto.getRoles().stream()
                 .anyMatch("ADMIN"::equals);
     }

@@ -2,7 +2,6 @@ package by.kladvirov.dto;
 
 import by.kladvirov.enums.Status;
 import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
