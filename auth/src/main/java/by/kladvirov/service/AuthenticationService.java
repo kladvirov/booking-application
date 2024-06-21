@@ -7,6 +7,7 @@ import by.kladvirov.dto.EmailDto;
 import by.kladvirov.dto.ForgotPasswordMessageDto;
 import by.kladvirov.dto.Message;
 import by.kladvirov.dto.PasswordChangingDto;
+import by.kladvirov.dto.PasswordRestoreDto;
 import by.kladvirov.dto.TokenDto;
 import by.kladvirov.dto.UserCreationDto;
 import by.kladvirov.dto.UserDto;
@@ -118,8 +119,9 @@ public class AuthenticationService {
     }
 
     @Transactional
-    public void restorePassword(String email, PasswordChangingDto passwordChangingDto) {
-        userService.updatePassword(email, passwordEncoder.encode(passwordChangingDto.getConfirmationPassword()));
+    public void restorePassword(String email, PasswordRestoreDto passwordRestoreDto) {
+        if(!passwordRestoreDto.getNewPassword().equals(passwordRestoreDto.getConfPassword())) throw new ServiceException("Passwords are not equals", HttpStatus.BAD_REQUEST);
+        userService.updatePassword(email, passwordEncoder.encode(passwordRestoreDto.getNewPassword()));
     }
 
     @Transactional

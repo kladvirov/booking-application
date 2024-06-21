@@ -3,6 +3,7 @@ package by.kladvirov.controller;
 import by.kladvirov.dto.AuthenticationRequest;
 import by.kladvirov.dto.EmailDto;
 import by.kladvirov.dto.PasswordChangingDto;
+import by.kladvirov.dto.PasswordRestoreDto;
 import by.kladvirov.dto.TokenDto;
 import by.kladvirov.dto.UserCreationDto;
 import by.kladvirov.dto.UserInfoDto;
@@ -75,9 +76,9 @@ public class AuthenticationController {
     @PostMapping("/restore-password")
     public ResponseEntity<HttpStatus> restorePassword(
             @RequestParam(name = "email") String email,
-            @RequestBody PasswordChangingDto passwordChangingDto
+            @RequestBody PasswordRestoreDto passwordRestoreDto
     ) {
-        authenticationService.restorePassword(email, passwordChangingDto);
+        authenticationService.restorePassword(email, passwordRestoreDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
