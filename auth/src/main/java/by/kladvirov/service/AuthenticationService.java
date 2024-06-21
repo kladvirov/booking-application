@@ -121,7 +121,7 @@ public class AuthenticationService {
     @Transactional
     public void restorePassword(String email, PasswordRestoreDto passwordRestoreDto) {
         if(!passwordRestoreDto.getNewPassword().equals(passwordRestoreDto.getConfPassword())) throw new ServiceException("Passwords are not equals", HttpStatus.BAD_REQUEST);
-        userService.updatePassword(email, passwordEncoder.encode(passwordRestoreDto.getNewPassword()));
+        userService.updatePasswordByEmail(email, passwordEncoder.encode(passwordRestoreDto.getNewPassword()));
     }
 
     @Transactional
