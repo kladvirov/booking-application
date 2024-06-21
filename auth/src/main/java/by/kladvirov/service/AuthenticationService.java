@@ -158,4 +158,5 @@ public class AuthenticationService {
             throw new ServiceException("There was an exception during sending message in auth service", HttpStatus.BAD_REQUEST);
         }
     }
+
 }
