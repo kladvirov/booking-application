@@ -81,7 +81,7 @@ public class AuthenticationController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/send-forgot-password-message")
+    @GetMapping("/send-message/forgot-password")
     public ResponseEntity<HttpStatus> forgotPassword(
             @RequestBody EmailDto email
     ) {
@@ -95,7 +95,7 @@ public class AuthenticationController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/send-verification-message")
+    @GetMapping("/send-message/verification")
     public ResponseEntity<HttpStatus> sendVerificationMessage(@AuthenticationPrincipal UserDetails userDetails) {
         authenticationService.sendVerificationMessage(userDetails);
         return new ResponseEntity<>(HttpStatus.OK);

@@ -114,7 +114,7 @@ public class AuthenticationService {
             throw new PasswordException("Current passwords don't match", HttpStatus.BAD_REQUEST);
         }
         userService.updatePassword(userDetails.getUsername(), passwordEncoder.encode(passwordChangingDto.getConfirmationPassword()));
-        sendPasswordChangingMessage(userDetails.getUsername());
+        sendChangePasswordMessage(userDetails.getUsername());
     }
 
     @Transactional
@@ -138,7 +138,7 @@ public class AuthenticationService {
     }
 
     @Transactional
-    public void sendPasswordChangingMessage(String username) {
+    public void sendChangePasswordMessage(String username) {
         User user = userService.getByLogin(username);
         if (user != null) {
             Message message = new ChangePasswordMessageDto(user.getName(), user.getSurname(), user.getEmail(), "Пароль был успешно сменен на новый");

@@ -23,7 +23,7 @@ public class ChangePasswordMessageDto implements Message{
 
     @Override
     public String getTemplate() {
-        return "password-changing";
+        return "change-password";
     }
 
 }
