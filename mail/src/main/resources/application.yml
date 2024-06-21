@@ -16,7 +16,7 @@ spring:
     username: guest
     password: guest
 server:
-  port: 8082
+  port: 8081
 
 queue: email_queue
 exchange: email_exchange
