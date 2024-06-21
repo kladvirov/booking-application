@@ -22,7 +22,7 @@ public class ConfirmationMessageDto implements Message{
 
     private final String subject = "Confirmation request";
 
-    private final String baseUrl = "http://localhost:8081/auth/verify";
+    private final String baseUrl = "http://localhost:8080/auth/verify";
 
     @Override
     public String getTemplate() {

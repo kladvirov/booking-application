@@ -124,7 +124,7 @@ public class ReservationServiceImpl implements ReservationService {
     public boolean isAdmin(String header){
         if(!header.startsWith("Bearer ")) throw new ServiceException("Header isn't bearer", HttpStatus.BAD_REQUEST);
         UserInfoDto userInfoDto = client.get()
-                .uri("http://localhost:8081/auth/get-info")
+                .uri("http://localhost:8080/auth/get-info")
                 .header(HttpHeaders.AUTHORIZATION, header)
                 .retrieve()
                 .bodyToMono(UserInfoDto.class)

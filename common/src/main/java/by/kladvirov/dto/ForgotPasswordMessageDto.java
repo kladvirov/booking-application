@@ -19,7 +19,7 @@ public class ForgotPasswordMessageDto implements Message{
 
     private final String subject = "Forgot password";
 
-    private final String baseUrl = "http://localhost:8081/auth/restore-password";
+    private final String baseUrl = "http://localhost:8080/auth/restore-password";
 
     @Override
     public String getTemplate() {
