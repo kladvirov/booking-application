@@ -5,8 +5,8 @@ import by.kladvirov.dto.core.ReservationDto;
 import by.kladvirov.dto.core.ServiceDto;
 import by.kladvirov.dto.core.ServiceProviderDto;
 import by.kladvirov.dto.payment.PaymentDto;
-import by.kladvirov.dto.payment.json.Info;
-import by.kladvirov.dto.payment.json.Provider;
+import by.kladvirov.dto.payment.json.PaymentInfo;
+import by.kladvirov.dto.payment.json.ProviderDto;
 import by.kladvirov.entity.Payment;
 import by.kladvirov.enums.PaymentStatus;
 import by.kladvirov.exception.ServiceException;
@@ -76,7 +76,7 @@ public class PaymentServiceImpl implements PaymentService {
         ServiceDto serviceDto = getServiceDto(header, reservationDto);
         ServiceProviderDto serviceProviderDto = getServiceProviderDto(header, serviceDto);
 
-        Payment payment = buildPayment(buildInfo(buildService(buildProvider(serviceProviderDto), serviceDto), reservationDto), userDto, reservationDto);
+        Payment payment = buildPayment(serviceProviderDto, serviceDto, reservationDto, userDto);
 
         return paymentMapper.toDto(paymentRepository.save(payment));
     }
@@ -209,32 +209,37 @@ public class PaymentServiceImpl implements PaymentService {
                 .block();
     }
 
-    private Info buildInfo(by.kladvirov.dto.payment.json.Service service, ReservationDto reservationDto) {
-        return Info.builder()
-                .service(service)
-                .hours(Duration.between(reservationDto.getDateFrom(), reservationDto.getDateTo()).toHours())
+    private Payment buildPayment(ServiceProviderDto serviceProviderDto, ServiceDto serviceDto, ReservationDto reservationDto, UserDto userDto) {
+        ProviderDto provider = createProvider(serviceProviderDto);
+        by.kladvirov.dto.payment.json.ServiceDto service = createService(provider, serviceDto);
+        PaymentInfo paymentInfo = createPaymentInfo(service, reservationDto);
+
+        return Payment.builder()
+                .info(paymentInfo)
+                .userId(userDto.getId())
+                .reservationId(reservationDto.getId())
                 .build();
     }
 
-    private by.kladvirov.dto.payment.json.Service buildService(Provider provider, ServiceDto serviceDto) {
-        return by.kladvirov.dto.payment.json.Service.builder()
-                .provider(provider)
-                .pricePerHour(serviceDto.getPricePerHour())
-                .build();
-    }
-
-    private Provider buildProvider(ServiceProviderDto serviceProviderDto) {
-        return Provider.builder()
+    private ProviderDto createProvider(ServiceProviderDto serviceProviderDto) {
+        return ProviderDto.builder()
                 .name(serviceProviderDto.getName())
                 .location(serviceProviderDto.getLocation())
                 .build();
     }
 
-    private Payment buildPayment(Info info, UserDto userDto, ReservationDto reservationDto) {
-        return Payment.builder()
-                .info(info)
-                .userId(userDto.getId())
-                .reservationId(reservationDto.getId())
+    private by.kladvirov.dto.payment.json.ServiceDto createService(ProviderDto provider, ServiceDto serviceDto) {
+        return by.kladvirov.dto.payment.json.ServiceDto.builder()
+                .provider(provider)
+                .pricePerHour(serviceDto.getPricePerHour())
+                .build();
+    }
+
+    private PaymentInfo createPaymentInfo(by.kladvirov.dto.payment.json.ServiceDto service, ReservationDto reservationDto) {
+        long hours = Duration.between(reservationDto.getDateFrom(), reservationDto.getDateTo()).toHours();
+        return PaymentInfo.builder()
+                .service(service)
+                .hours(hours)
                 .build();
     }
 
