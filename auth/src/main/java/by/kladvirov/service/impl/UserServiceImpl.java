@@ -9,7 +9,6 @@ import by.kladvirov.exception.ServiceException;
 import by.kladvirov.mapper.UserMapper;
 import by.kladvirov.repository.UserRepository;
 import by.kladvirov.service.RoleService;
-import by.kladvirov.service.TokenService;
 import by.kladvirov.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -30,8 +29,6 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     private final RoleService roleService;
-
-    private final TokenService tokenService;
 
     @Transactional(readOnly = true)
     @Override
@@ -99,7 +96,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void updateBalance(String header, BigDecimal balance) {
+    public void updateBalance(BigDecimal balance) {
         String login = SecurityContextHolder.getContext().getAuthentication().getName();
         if (login != null) {
             userRepository.updateBalance(login, balance);

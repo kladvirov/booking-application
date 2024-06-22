@@ -29,7 +29,7 @@ public interface UserService {
 
     void update(Long id, UserCreationDto userCreationDto);
 
-    void updateBalance(String header, BigDecimal balance);
+    void updateBalance(BigDecimal balance);
 
     void updateUserRoles(Long id, List<Long> roleIds);
 
