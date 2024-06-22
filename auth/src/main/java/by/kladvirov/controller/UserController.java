@@ -49,14 +49,14 @@ public class UserController {
         return new ResponseEntity<>(userService.findAll(pageable), HttpStatus.OK);
     }
 
-    @GetMapping("/find-by-role")
+    @GetMapping("/by-role")
     @PreAuthorize("hasAuthority('READ_USERS_BY_ROLE')")
     public ResponseEntity<List<UserDto>> findUsersByRoleName(@RequestParam("roleName") String roleName) {
         List<UserDto> users = userService.findUsersByRoleName(roleName);
         return ResponseEntity.ok(users);
     }
 
-    @GetMapping("/find-roles")
+    @GetMapping("/user-roles")
     @PreAuthorize("hasAuthority('READ_USER_ROLES')")
     public ResponseEntity<List<String>> findUserRoles(@RequestParam("login") String login) {
         List<String> userRoles = userService.findUserRoles(login);
@@ -65,7 +65,7 @@ public class UserController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('CREATE_USERS')")
-    public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserCreationDto userCreationDto) {
+    public ResponseEntity<UserDto> create(@RequestBody @Valid UserCreationDto userCreationDto) {
         return new ResponseEntity<>(userService.save(userCreationDto), HttpStatus.CREATED);
     }
 
@@ -77,12 +77,9 @@ public class UserController {
     }
 
     @PutMapping
-    @PreAuthorize("hasAuthority('UPDATE_USERS')") // только тут другая осорити будет
-    public ResponseEntity<HttpStatus> updateBalance(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String header,
-            @RequestParam("balance") BigDecimal balance
-    ) {
-        userService.updateBalance(header, balance);
+    @PreAuthorize("hasAuthority('UPDATE_USER_BALANCE')")
+    public ResponseEntity<HttpStatus> updateBalance(@RequestParam("balance") BigDecimal balance) {
+        userService.updateBalance(balance);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -93,14 +90,14 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("/update-roles/{id}")
+    @PutMapping("/roles/{id}")
     @PreAuthorize("hasAuthority('UPDATE_USERS')")
     public ResponseEntity<HttpStatus> updateUserRoles(@PathVariable("id") Long id, @RequestBody List<Long> roleIds) {
         userService.updateUserRoles(id, roleIds);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete-roles/{id}")
+    @DeleteMapping("/roles/{id}")
     @PreAuthorize("hasAuthority('DELETE_USERS')")
     public ResponseEntity<HttpStatus> deleteUserRoles(@PathVariable("id") Long id, @RequestBody List<Long> roleIds) {
         userService.deleteUserRoles(id, roleIds);
