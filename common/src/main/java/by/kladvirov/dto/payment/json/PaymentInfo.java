@@ -4,13 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-@Data
 @AllArgsConstructor
+@Data
 @Builder
-public class Service {
+public class PaymentInfo {
 
-    private Float pricePerHour;
+    private Long hours;
 
-    private Provider provider;
+    private ServiceDto service;
 
 }

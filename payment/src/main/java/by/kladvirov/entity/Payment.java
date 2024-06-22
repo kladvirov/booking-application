@@ -1,7 +1,7 @@
 package by.kladvirov.entity;
 
 import by.kladvirov.enums.PaymentStatus;
-import by.kladvirov.dto.payment.json.Info;
+import by.kladvirov.dto.payment.json.PaymentInfo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -34,7 +34,7 @@ public class Payment {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "info", columnDefinition = "jsonb")
-    private Info info;
+    private PaymentInfo info;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")

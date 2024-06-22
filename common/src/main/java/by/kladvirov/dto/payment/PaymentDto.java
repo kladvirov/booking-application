@@ -1,6 +1,6 @@
 package by.kladvirov.dto.payment;
 
-import by.kladvirov.dto.payment.json.Info;
+import by.kladvirov.dto.payment.json.PaymentInfo;
 import by.kladvirov.enums.PaymentStatus;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +19,7 @@ public class PaymentDto {
 
     private Long id;
 
-    private Info info;
+    private PaymentInfo info;
 
     @NotNull
     private PaymentStatus status;
