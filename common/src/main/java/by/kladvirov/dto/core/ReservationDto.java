@@ -1,4 +1,4 @@
-package by.kladvirov.dto;
+package by.kladvirov.dto.core;
 
 import by.kladvirov.enums.Status;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -14,6 +14,8 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReservationDto {
+
+    private Long id;
 
     @NotNull(message = "Status cannot be empty")
     private Status status;
@@ -31,7 +33,7 @@ public class ReservationDto {
     @NotNull(message = "Expiration date cannot be null, but can be empty")
     private ZonedDateTime expiresAt;
 
-    @NotNull(message = "Username cannot be empty")
+    @NotEmpty(message = "Username cannot be empty")
     private String username;
 
     @NotNull(message = "Service id cannot be empty")

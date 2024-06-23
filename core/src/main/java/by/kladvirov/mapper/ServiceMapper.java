@@ -1,9 +1,7 @@
 package by.kladvirov.mapper;
 
 import by.kladvirov.dto.ServiceCreationDto;
-import by.kladvirov.dto.ServiceDto;
-import by.kladvirov.dto.ServiceProviderCreationDto;
-import by.kladvirov.dto.ServiceProviderDto;
+import by.kladvirov.dto.core.ServiceDto;
 import by.kladvirov.model.Service;
 import by.kladvirov.model.ServiceProvider;
 import org.mapstruct.Mapper;
@@ -12,7 +10,6 @@ import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
-import java.util.Set;
 
 @Mapper(componentModel = "SPRING", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ServiceMapper {

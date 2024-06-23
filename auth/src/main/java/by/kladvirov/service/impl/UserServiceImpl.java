@@ -13,9 +13,11 @@ import by.kladvirov.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -42,6 +44,15 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByLogin(login)
                 .orElseThrow(() -> new ServiceException("There is no such user with following login", HttpStatus.NOT_FOUND));
     }
+
+    @Transactional(readOnly = true)
+    @Override
+    public UserDto findByLogin(String login) {
+        User user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new ServiceException("There is no such user", HttpStatus.NOT_FOUND));
+        return userMapper.toDto(user);
+    }
+
 
     @Transactional(readOnly = true)
     @Override
@@ -81,6 +92,17 @@ public class UserServiceImpl implements UserService {
         User mappedUser = userMapper.toEntity(userDto);
         updateUser(user, mappedUser);
         userRepository.save(user);
+    }
+
+    @Transactional
+    @Override
+    public void updateBalance(BigDecimal balance) {
+        String login = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (login != null) {
+            userRepository.updateBalance(login, balance);
+        } else {
+            throw new ServiceException("There is no authorized user with the following login");
+        }
     }
 
     @Transactional

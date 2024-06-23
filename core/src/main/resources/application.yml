@@ -1,3 +1,6 @@
+server:
+  port: 8083
+
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -18,9 +21,6 @@ spring:
       port: 6379
   main:
     allow-bean-definition-overriding: true
-
-server:
-  port: 8080
 
 application:
   security:

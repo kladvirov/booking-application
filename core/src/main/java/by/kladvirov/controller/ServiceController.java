@@ -1,8 +1,8 @@
 package by.kladvirov.controller;
 
 import by.kladvirov.dto.ServiceCreationDto;
-import by.kladvirov.dto.ServiceDto;
 import by.kladvirov.service.ServiceService;
+import by.kladvirov.dto.core.ServiceDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,9 +28,7 @@ public class ServiceController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('READ_SERVICES')")
-    public ResponseEntity<ServiceDto> findById(
-            @PathVariable("id") Long id
-    ) {
+    public ResponseEntity<ServiceDto> findById(@PathVariable("id") Long id) {
         return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
     }
 
@@ -62,10 +60,9 @@ public class ServiceController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('DELETE_SERVICES')")
-    public ResponseEntity<HttpStatus> delete (
-            @PathVariable Long id
-    ) {
+    public ResponseEntity<HttpStatus> delete(@PathVariable Long id) {
         service.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 }

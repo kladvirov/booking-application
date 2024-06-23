@@ -22,6 +22,7 @@ services:
     restart: always
     ports:
       - "6379:6379"
+
   rabbitmq:
     image: rabbitmq:3.13.0-management-alpine
     container_name: rabbitmq
@@ -29,6 +30,7 @@ services:
     ports:
       - 5672:5672
       - 15672:15672 # management tool
+
   liquibase:
     container_name: liquibase
     image: liquibase:latest
@@ -40,4 +42,9 @@ services:
     volumes:
       - ./database/changelog/:/liquibase/changelog/
     command:
-      update --username=postgres --password=postgres --changeLogFile=/changelog/changelog.xml --url=jdbc:postgresql://postgres:5432/postgres
+      update 
+      --username=postgres
+      --password=postgres 
+      --changeLogFile=/changelog/changelog.xml 
+      --url=jdbc:postgresql://postgres:5432/postgres
+      --driver=org.postgresql.Driver

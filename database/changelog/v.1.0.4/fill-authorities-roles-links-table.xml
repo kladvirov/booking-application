@@ -1,0 +1,17 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="2" author="wladponomar@gmail.com">
+        <comment>Inserting test-data in roles-authorities table</comment>
+        <sql>
+            -- USERS
+            INSERT INTO authorities_roles_links (authority_id, role_id)
+            VALUES
+                (25, 1), (26, 1),
+                (27, 1), (28, 1)
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

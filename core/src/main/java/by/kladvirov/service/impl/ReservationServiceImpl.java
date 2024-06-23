@@ -1,19 +1,21 @@
 package by.kladvirov.service.impl;
 
 import by.kladvirov.dto.ReservationCreationDto;
-import by.kladvirov.dto.ReservationDto;
-import by.kladvirov.dto.UserInfoDto;
 import by.kladvirov.exception.ServiceException;
 import by.kladvirov.mapper.ReservationMapper;
 import by.kladvirov.model.Reservation;
 import by.kladvirov.repository.ReservationRepository;
 import by.kladvirov.service.ReservationService;
+import by.kladvirov.dto.UserInfoDto;
+import by.kladvirov.dto.core.ReservationDto;
+import by.kladvirov.dto.payment.PaymentDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Objects;
@@ -22,17 +24,24 @@ import java.util.Objects;
 @Service
 public class ReservationServiceImpl implements ReservationService {
 
+    private final WebClient webClient;
+
     private final ReservationRepository repository;
 
     private final ReservationMapper mapper;
 
-    private final WebClient client;
+    @Transactional(readOnly = true)
+    @Override
+    public ReservationDto findById(Long id) {
+        return mapper.toDto(repository.findById(id)
+                .orElseThrow(() -> new ServiceException("Cannot find reservation by id", HttpStatus.BAD_REQUEST)));
+    }
 
     @Transactional(readOnly = true)
     @Override
-    public ReservationDto findById(Long id){
-        return mapper.toDto(repository.findById(id)
-                .orElseThrow(() -> new ServiceException("Cannot find reservation by id", HttpStatus.BAD_REQUEST)));
+    public ReservationDto findByLoginAndId(String login, Long id) {
+        return mapper.toDto(repository.findByUsernameAndId(login, id)
+                .orElseThrow(() -> new ServiceException("There is no reservation with following login and id", HttpStatus.NOT_FOUND)));
     }
 
     @Transactional(readOnly = true)
@@ -47,14 +56,15 @@ public class ReservationServiceImpl implements ReservationService {
         return mapper.toDto(repository.findAllByUsername(username));
     }
 
-    @Transactional
     @Override
-    public ReservationDto save(ReservationCreationDto dto) {
+    public ReservationDto save(ReservationCreationDto dto, String header) {
         if (hasReservation(dto)) {
             throw new ServiceException("Cannot save reservation in service because there is at this time a reservation", HttpStatus.BAD_REQUEST);
         }
         Reservation entity = mapper.toEntity(dto);
-        return mapper.toDto(repository.save(entity));
+        Reservation savedEntity = repository.save(entity);
+        createPayment(header, savedEntity);
+        return mapper.toDto(savedEntity);
     }
 
     @Transactional
@@ -123,8 +133,8 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public boolean isAdmin(String header){
         if(!header.startsWith("Bearer ")) throw new ServiceException("Header isn't bearer", HttpStatus.BAD_REQUEST);
-        UserInfoDto userInfoDto = client.get()
-                .uri("http://localhost:8081/auth/get-info")
+        UserInfoDto userInfoDto = webClient.get()
+                .uri("http://localhost:8080/auth/get-info")
                 .header(HttpHeaders.AUTHORIZATION, header)
                 .retrieve()
                 .bodyToMono(UserInfoDto.class)
@@ -133,6 +143,22 @@ public class ReservationServiceImpl implements ReservationService {
         if(userInfoDto == null) throw new ServiceException("Cannot get user info in method isAllowedToRead. It is null", HttpStatus.BAD_REQUEST);
         return userInfoDto.getRoles().stream()
                 .anyMatch("ADMIN"::equals);
+    }
+
+    private void createPayment(String header, Reservation savedEntity) {
+        webClient.post()
+                .uri(uriBuilder -> uriBuilder
+                        .scheme("http")
+                        .host("localhost")
+                        .port(8082)
+                        .path("/payments")
+                        .queryParam("reservationId", savedEntity.getId())
+                        .build())
+                .header(HttpHeaders.AUTHORIZATION, header)
+                .retrieve()
+                .bodyToMono(PaymentDto.class)
+                .onErrorResume(e -> Mono.error(new Exception("Error during posting payment dto", e)))
+                .block();
     }
 
 }

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,7 +18,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findUserById(@Param("id") Long id);
 
     @Query("from User u left join fetch u.roles r left join fetch r.authorities where u.login = :login")
-    Optional<User> findByLogin(String login);
+    Optional<User> findByLogin(@Param("login") String login);
 
     @Query("from User u left join fetch u.roles")
     List<User> findAllUsers(Pageable pageable);
@@ -33,6 +34,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query("update User u set u.password = :password where u.login = :login")
     void updatePassword(@Param("login") String login, @Param("password") String password);
+
+    @Modifying
+    @Query("update User u set u.balance = :balance where u.login = :login")
+    void updateBalance(@Param("login") String login, @Param("balance") BigDecimal balance);
 
     @Modifying
     @Query("update User u set u.status = :status where u.id = :id")

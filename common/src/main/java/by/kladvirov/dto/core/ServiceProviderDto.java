@@ -1,4 +1,4 @@
-package by.kladvirov.dto;
+package by.kladvirov.dto.core;
 
 import by.kladvirov.enums.Status;
 import jakarta.validation.constraints.NotEmpty;
@@ -11,25 +11,24 @@ import lombok.NoArgsConstructor;
 import java.time.ZonedDateTime;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class ServiceDto {
+@NoArgsConstructor
+public class ServiceProviderDto {
 
-    @NotNull(message = "Price cannot be empty")
-    private Float pricePerHour;
+    @NotEmpty(message = "Name cannot be null")
+    private String name;
 
-    @NotEmpty(message = "Slot cannot be empty")
-    @Size(min = 2, max = 32, message = "Slot name should be in diapason from 2 to 32 characters")
-    private String slot;
+    @NotEmpty(message = "Location cannot be empty")
+    private String location;
 
-    @NotNull(message = "Status cannot be empty")
+    @NotEmpty(message = "Type cannot be empty")
+    private String type;
+
+    @NotNull(message = "Status cannot be null")
     @Size(min = 2, max = 64, message = "Status name should be in diapason from 2 to 64 characters")
     private Status status;
 
     @NotNull(message = "Creation date cannot be null")
     private ZonedDateTime createdAt;
-
-    @NotNull(message = "Service provider cannot be empty")
-    private Long serviceProviderId;
 
 }

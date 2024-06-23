@@ -6,6 +6,7 @@ import by.kladvirov.entity.User;
 import by.kladvirov.enums.UserStatus;
 import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface UserService {
@@ -13,6 +14,8 @@ public interface UserService {
     UserDto findById(Long id);
 
     User getByLogin(String login);
+
+    UserDto findByLogin(String login);
 
     List<UserDto> findUsersByRoleName(String roleName);
 
@@ -25,6 +28,8 @@ public interface UserService {
     UserDto save(UserCreationDto userCreationDto);
 
     void update(Long id, UserCreationDto userCreationDto);
+
+    void updateBalance(BigDecimal balance);
 
     void updateUserRoles(Long id, List<Long> roleIds);
 

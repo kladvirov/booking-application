@@ -25,7 +25,7 @@ public class ReservationCreationDto {
     @FutureOrPresent
     private ZonedDateTime dateTo;
 
-    @NotNull(message = "Username cannot be empty")
+    @NotEmpty(message = "Username cannot be empty")
     private String username;
 
     @NotNull(message = "Service id cannot be empty")

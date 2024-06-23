@@ -6,6 +6,7 @@ import by.kladvirov.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,10 +16,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -34,29 +37,35 @@ public class UserController {
         return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
     }
 
+    @GetMapping("/get-user")
+    @PreAuthorize("hasAuthority('READ_USERS')")
+    public ResponseEntity<UserDto> getByLogin(@RequestParam("login") String login) {
+        return new ResponseEntity<>(userService.findByLogin(login), HttpStatus.OK);
+    }
+
     @GetMapping
     @PreAuthorize("hasAuthority('READ_USERS')")
     public ResponseEntity<List<UserDto>> getAllUsers(Pageable pageable) {
         return new ResponseEntity<>(userService.findAll(pageable), HttpStatus.OK);
     }
 
-    @GetMapping("/find-by-role")
+    @GetMapping("/by-role")
     @PreAuthorize("hasAuthority('READ_USERS_BY_ROLE')")
-    public ResponseEntity<List<UserDto>> findUsersByRoleName(@RequestParam(value = "roleName") String roleName) {
+    public ResponseEntity<List<UserDto>> findUsersByRoleName(@RequestParam("roleName") String roleName) {
         List<UserDto> users = userService.findUsersByRoleName(roleName);
         return ResponseEntity.ok(users);
     }
 
-    @GetMapping("/find-roles")
+    @GetMapping("/user-roles")
     @PreAuthorize("hasAuthority('READ_USER_ROLES')")
-    public ResponseEntity<List<String>> findUserRoles(@RequestParam(value = "login") String login) {
+    public ResponseEntity<List<String>> findUserRoles(@RequestParam("login") String login) {
         List<String> userRoles = userService.findUserRoles(login);
         return ResponseEntity.ok(userRoles);
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('CREATE_USERS')")
-    public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserCreationDto userCreationDto) {
+    public ResponseEntity<UserDto> create(@RequestBody @Valid UserCreationDto userCreationDto) {
         return new ResponseEntity<>(userService.save(userCreationDto), HttpStatus.CREATED);
     }
 
@@ -67,6 +76,13 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PutMapping
+    @PreAuthorize("hasAuthority('UPDATE_USER_BALANCE')")
+    public ResponseEntity<HttpStatus> updateBalance(@RequestParam("balance") BigDecimal balance) {
+        userService.updateBalance(balance);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('DELETE_USERS')")
     public ResponseEntity<HttpStatus> deleteById(@PathVariable("id") Long id) {
@@ -74,14 +90,14 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("/update-roles/{id}")
+    @PutMapping("/roles/{id}")
     @PreAuthorize("hasAuthority('UPDATE_USERS')")
     public ResponseEntity<HttpStatus> updateUserRoles(@PathVariable("id") Long id, @RequestBody List<Long> roleIds) {
         userService.updateUserRoles(id, roleIds);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete-roles/{id}")
+    @DeleteMapping("/roles/{id}")
     @PreAuthorize("hasAuthority('DELETE_USERS')")
     public ResponseEntity<HttpStatus> deleteUserRoles(@PathVariable("id") Long id, @RequestBody List<Long> roleIds) {
         userService.deleteUserRoles(id, roleIds);

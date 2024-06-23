@@ -1,8 +1,7 @@
 package by.kladvirov.service.impl;
 
 import by.kladvirov.dto.ServiceProviderCreationDto;
-import by.kladvirov.dto.ServiceProviderDto;
-import by.kladvirov.enums.Status;
+import by.kladvirov.dto.core.ServiceProviderDto;
 import by.kladvirov.exception.ServiceException;
 import by.kladvirov.mapper.ServiceProviderMapper;
 import by.kladvirov.model.ServiceProvider;
@@ -14,8 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service

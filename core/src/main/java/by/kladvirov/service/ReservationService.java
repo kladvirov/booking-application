@@ -1,7 +1,7 @@
 package by.kladvirov.service;
 
 import by.kladvirov.dto.ReservationCreationDto;
-import by.kladvirov.dto.ReservationDto;
+import by.kladvirov.dto.core.ReservationDto;
 
 import java.util.List;
 
@@ -9,11 +9,13 @@ public interface ReservationService {
 
     ReservationDto findById(Long id);
 
+    ReservationDto findByLoginAndId(String login, Long id);
+
     List<ReservationDto> findAll();
 
     List<ReservationDto>findAllByUsername(String username);
 
-    ReservationDto save(ReservationCreationDto dto);
+    ReservationDto save(ReservationCreationDto dto, String header);
 
     void update(Long id, ReservationCreationDto dto);
 

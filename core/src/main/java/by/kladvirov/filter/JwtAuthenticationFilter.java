@@ -1,11 +1,10 @@
-package by.kladvirov.security;
+package by.kladvirov.filter;
 
 import by.kladvirov.dto.UserInfoDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +16,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 
@@ -27,41 +27,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final WebClient webClient;
 
     @Override
-    protected void doFilterInternal(
-            @NonNull HttpServletRequest request,
-            @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain
-    ) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (header == null || !header.startsWith("Bearer ")) {
+        final String authHeader = request.getHeader("Authorization");
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        UserInfoDto userInfoDto = webClient.get()
-                .uri("http://localhost:8081/auth/get-info")
-                .header(HttpHeaders.AUTHORIZATION, header)
-                .retrieve()
-                .bodyToMono(UserInfoDto.class)
-                .onErrorComplete()
-                .block();
 
-        if (userInfoDto == null) {
-            response.setStatus(400);
-            response.getWriter().write("Invalid token");
-            return;
-        }
-
+        UserInfoDto userInfoDto = fetchUser(authHeader);
         UserDetails userDetails = User.builder()
                 .username(userInfoDto.getLogin())
                 .password("")
-                .authorities(
-                        userInfoDto.getAuthorities().stream()
-                                .map(SimpleGrantedAuthority::new)
-                                .toList()
-                ).build();
-
+                .authorities(userInfoDto.getAuthorities().stream().map(SimpleGrantedAuthority::new).toList())
+                .build();
         UsernamePasswordAuthenticationToken token = UsernamePasswordAuthenticationToken.authenticated(
                 userDetails, null, userDetails.getAuthorities()
         );
@@ -71,4 +52,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    private UserInfoDto fetchUser(String authHeader) {
+        return webClient.get()
+                .uri("http://localhost:8080/auth/get-info")
+                .header(HttpHeaders.AUTHORIZATION, authHeader)
+                .retrieve()
+                .bodyToMono(UserInfoDto.class)
+                .onErrorResume(e -> Mono.error(new Exception("Error during getting user's info", e)))
+                .block();
+    }
+
 }
+
