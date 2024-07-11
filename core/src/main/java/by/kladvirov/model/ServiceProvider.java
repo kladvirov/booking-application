@@ -5,26 +5,19 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreRemove;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.util.LinkedList;
-import java.util.List;
 
 @Entity
 @Data
@@ -68,12 +61,12 @@ public class ServiceProvider {
     }
 
     @PreUpdate
-    public void setUpdatedAt(){
+    public void setUpdatedAt() {
         this.updatedAt = ZonedDateTime.now();
     }
 
     @PrePersist
-    public void setField(){
+    public void setField() {
         this.createdAt = ZonedDateTime.now();
     }
 

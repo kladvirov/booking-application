@@ -7,10 +7,11 @@
         <comment>Inserting links in users_roles_links table</comment>
         <sql>
             INSERT INTO users_roles_links(user_id, role_id)
-            VALUES
-                (1, 1), (5, 2),
-                (4, 1), (2, 2),
-                (3, 2);
+            VALUES (1, 1),
+                   (5, 2),
+                   (4, 1),
+                   (2, 2),
+                   (3, 2);
         </sql>
     </changeSet>
 

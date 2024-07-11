@@ -1,0 +1,31 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="1" author="andrejsuslov308@gmail.com">
+        <comment>Editing users table</comment>
+        <sql>
+            UPDATE users
+            SET password = '$2y$10$z3hjQGZRhcjQAUtFI1ETTuQUBn6i38mqg32HkCYF/eYdtMBQH/uDG'
+            WHERE id = 1; -- i_hate_python228
+
+            UPDATE users
+            SET password = '$2y$10$YaGxY32KoPnhuL9OqTeZTeYbvtVBUOWf9aAhl71qzZhQJ6K5EZpjS/eYdtMBQH/uDG'
+            WHERE id = 2; -- qwerty
+
+            UPDATE users
+            SET password = '$2y$10$M6dvZZ8.dO8.Xuwh0/Powe5luAf1qeBsdjt8Jxg5Kz1At0q0vLQqe/eYdtMBQH/uDG'
+            WHERE id = 3; -- blabla1337LOL
+
+            UPDATE users
+            SET password = '$2y$10$0vGnkLLfwztKMSbZ3rso4.KgQpGgTxEOSoyJ9i4CERzBENXrsmvAS/eYdtMBQH/uDG'
+            WHERE id = 4; -- suslov228
+
+            UPDATE users
+            SET password = '$2y$10$z3hjQGZRhcjQAUtFI1ETTuQUBn6i38mqg32HkCYF/eYdtMBQH/uDG'
+            WHERE id = 5; -- 12345678
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

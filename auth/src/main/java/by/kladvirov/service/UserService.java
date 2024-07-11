@@ -1,5 +1,6 @@
 package by.kladvirov.service;
 
+import by.kladvirov.dto.EmailDto;
 import by.kladvirov.dto.UserCreationDto;
 import by.kladvirov.dto.UserDto;
 import by.kladvirov.entity.User;
@@ -20,6 +21,8 @@ public interface UserService {
 
     List<UserDto> findAll(Pageable pageable);
 
+    User findByEmail(EmailDto email);
+
     Boolean existsByEmail(String email);
 
     UserDto save(UserCreationDto userCreationDto);
@@ -35,6 +38,8 @@ public interface UserService {
     void delete(Long id);
 
     void updatePassword(String login, String password);
+
+    void updatePasswordByEmail(String email, String password);
 
     void updateStatus(Long id, UserStatus status);
 

@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         UserInfoDto userInfoDto = webClient.get()
-                .uri("http://localhost:8081/auth/get-info")
+                .uri("http://localhost:8080/auth/get-info")
                 .header(HttpHeaders.AUTHORIZATION, header)
                 .retrieve()
                 .bodyToMono(UserInfoDto.class)

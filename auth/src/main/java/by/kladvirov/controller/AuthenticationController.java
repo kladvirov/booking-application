@@ -1,11 +1,12 @@
 package by.kladvirov.controller;
 
-
+import by.kladvirov.dto.AuthenticationRequest;
+import by.kladvirov.dto.EmailDto;
 import by.kladvirov.dto.PasswordChangingDto;
+import by.kladvirov.dto.PasswordRestoreDto;
 import by.kladvirov.dto.TokenDto;
 import by.kladvirov.dto.UserCreationDto;
 import by.kladvirov.dto.UserInfoDto;
-import by.kladvirov.dto.AuthenticationRequest;
 import by.kladvirov.service.AuthenticationService;
 import by.kladvirov.service.impl.UserServiceImpl;
 import jakarta.validation.Valid;
@@ -72,13 +73,30 @@ public class AuthenticationController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PostMapping("/restore-password")
+    public ResponseEntity<HttpStatus> restorePassword(
+            @RequestParam(name = "email") String email,
+            @RequestBody PasswordRestoreDto passwordRestoreDto
+    ) {
+        authenticationService.restorePassword(email, passwordRestoreDto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/send-message/forgot-password")
+    public ResponseEntity<HttpStatus> forgotPassword(
+            @RequestBody EmailDto email
+    ) {
+        authenticationService.sendForgotPasswordMessage(email);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("/verify")
     public ResponseEntity<HttpStatus> verify(@RequestParam(name = "token") String token) {
         authenticationService.verifyUser(token);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/send-verification-message")
+    @GetMapping("/send-message/verification")
     public ResponseEntity<HttpStatus> sendVerificationMessage(@AuthenticationPrincipal UserDetails userDetails) {
         authenticationService.sendVerificationMessage(userDetails);
         return new ResponseEntity<>(HttpStatus.OK);

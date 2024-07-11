@@ -2,7 +2,6 @@ package by.kladvirov.service.impl;
 
 import by.kladvirov.dto.ServiceProviderCreationDto;
 import by.kladvirov.dto.ServiceProviderDto;
-import by.kladvirov.enums.Status;
 import by.kladvirov.exception.ServiceException;
 import by.kladvirov.mapper.ServiceProviderMapper;
 import by.kladvirov.model.ServiceProvider;
@@ -14,8 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -39,7 +36,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 
     @Transactional
     public ServiceProviderDto save(ServiceProviderCreationDto dto) {
-        if(hasName(dto)){
+        if (hasName(dto)) {
             throw new ServiceException("Cannot save service provider in service because its name is placed yet", HttpStatus.BAD_REQUEST);
         }
         ServiceProvider entity = mapper.toEntity(dto);
@@ -70,7 +67,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
         target.setType(source.getType());
     }
 
-    private boolean hasName(ServiceProviderCreationDto dto){
+    private boolean hasName(ServiceProviderCreationDto dto) {
         ServiceProvider serviceProvider = repository.findByName(dto.getName());
         return serviceProvider != null;
     }
